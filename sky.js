@@ -49,13 +49,13 @@
   // ---------- colours by sun height ----------
   // [elevation, sky top, sky middle, horizon glow, far mountains, mid mountains, near mountains, ground, cloud]
   const LIGHT = [
-    [-18, "#1b1647", "#2c2470", "#4a3a8e", "#3a2d78", "#2e2466", "#251d57", "#2a2160", "rgba(190,170,255,.22)"],
-    [-8, "#251f5e", "#40358a", "#7a5aa8", "#4d3b8c", "#3e307c", "#33286c", "#3a2c74", "rgba(200,175,255,.3)"],
-    [-3, "#4a3f98", "#8a68b8", "#f0a2c0", "#7a5aa6", "#654a96", "#533d86", "#6a4c98", "rgba(255,190,220,.55)"],
-    [1, "#7d72cf", "#d79bc6", "#ffc9a8", "#a77cb6", "#8c65a8", "#76539a", "#b98dc0", "rgba(255,205,215,.8)"],
-    [6, "#9aa6ef", "#f2c2d0", "#ffe2c8", "#9b93d8", "#8279cc", "#6b63bf", "#a9b8ef", "rgba(255,240,245,.88)"],
-    [16, "#8fb8fb", "#cfe2ff", "#fff1e6", "#8fa6ec", "#7088e0", "#5c74d4", "#9fd0f8", "rgba(255,255,255,.9)"],
-    [45, "#86b4ff", "#c8e2ff", "#f2f8ff", "#94acef", "#738ce2", "#5d77d6", "#a4d8fa", "rgba(255,255,255,.92)"]];
+    [-18, "#120e3a", "#241a63", "#3b2a86", "#2c2170", "#231a5e", "#1c154f", "#211862", "rgba(190,170,255,.28)"],
+    [-8, "#1d1652", "#3a2a86", "#6a4aa8", "#45338a", "#38297a", "#2d2169", "#33266f", "rgba(205,180,255,.38)"],
+    [-3, "#3d2f8f", "#8a5fb8", "#ff9fc4", "#7552a6", "#614496", "#503886", "#6b4a9c", "rgba(255,195,228,.62)"],
+    [1, "#6f5fcf", "#d58fc8", "#ffc0a8", "#a274bc", "#8a62ae", "#74519e", "#b689c6", "rgba(255,212,232,.86)"],
+    [6, "#8e8cec", "#e9b6dc", "#ffdcc8", "#a99be0", "#9282d4", "#7c6cc6", "#c9b6f0", "rgba(255,242,250,.92)"],
+    [16, "#9fa6f6", "#dcc6fb", "#ffe2ee", "#ad9fe8", "#958ade", "#8274d2", "#d6c8fa", "rgba(255,255,255,.94)"],
+    [45, "#a3acfa", "#d9c9fd", "#ffe6f1", "#b1a6ec", "#9a90e2", "#8679d6", "#ddd0fc", "rgba(255,255,255,.95)"]];
   const hex = (h) => { const m = h.match(/\d*\.?\d+/g); return h[0] === "#" ? [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16)).concat(1) : m.map(Number).concat(m.length < 4 ? [1] : []); };
   const mix = (a, b, t) => { const A = hex(a), B = hex(b); const v = A.map((x, i) => x + (B[i] - x) * t);
     return `rgba(${Math.round(v[0])},${Math.round(v[1])},${Math.round(v[2])},${v[3].toFixed(2)})`; };
@@ -128,6 +128,19 @@
     clouds.append(st);
   });
 
+  // A sea of big fluffy clouds resting on the hills, and glints that pop all over the sky.
+  const puff = (seed, n) => { let d = ""; for (let i = 0; i < n; i++) { const x = (i / (n - 1)) * 800 + ((seed * (i + 3) * 37) % 40) - 20;
+      const r = 34 + ((seed * (i + 7) * 53) % 38); d += `<circle cx="${x.toFixed(0)}" cy="${(96 - r * 0.55).toFixed(0)}" r="${r}"/>`; } return d; };
+  const cloudSea = div("cloud-sea", `<svg viewBox="0 0 800 110" preserveAspectRatio="none"><defs>
+      <linearGradient id="seaA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--cloud-top)"/><stop offset="1" stop-color="var(--cloud-shade)"/></linearGradient></defs>
+      <g class="sea-back">${puff(3, 13)}</g><g class="sea-front" fill="url(#seaA)">${puff(7, 15)}</g></svg>`);
+  const glints = div("glints");
+  for (let i = 0; i < 14; i++) {
+    const g = div("glint", '<svg viewBox="0 0 24 24"><path d="M12 1c.8 6 3.6 9.6 11 11-7.4 1.4-10.2 5-11 11-.8-6-3.6-9.6-11-11 7.4-1.4 10.2-5 11-11z"/></svg>');
+    const size = rand(10, 22);
+    Object.assign(g.style, { left: `${rand(2, 96)}%`, top: `${rand(2, 96)}vh`, width: `${size}px`, height: `${size}px`, animationDuration: `${rand(3.5, 7)}s`, animationDelay: `${-rand(0, 7)}s` });
+    glints.append(g);
+  }
   const land = div("land", `<svg class="mtn far" viewBox="0 0 400 100" preserveAspectRatio="none">
       <path d="M0 70 L30 48 Q40 38 52 46 L80 30 Q92 20 104 30 L140 52 Q150 58 162 50 L196 26 Q208 16 222 28 L262 56 L290 40 Q300 33 312 40 L352 22 Q364 14 376 26 L400 40 V100 H0 Z"/></svg>
     <svg class="mtn mid" viewBox="0 0 400 100" preserveAspectRatio="none">
@@ -136,7 +149,7 @@
       <path d="M0 72 Q40 44 90 62 Q130 76 170 58 Q214 38 262 60 Q300 76 340 56 Q372 42 400 54 V100 H0 Z"/></svg>
     <div class="ground"><span class="shine"></span><span class="mist m1"></span><span class="mist m2"></span></div>`);
 
-  sky.append(stars, aurora, shooting, rainbow, glow, beams, sun, moon, clouds, land);
+  sky.append(stars, aurora, shooting, rainbow, glow, beams, sun, moon, clouds, land, cloudSea, glints);
 
   // A tap on the sun or moon makes it wiggle (and chime, if sounds are on).
   [sun, moon].forEach((c) => c.addEventListener("click", () => {
@@ -148,14 +161,18 @@
   function shoot() {
     const n = document.body.classList.contains("night");
     if (!reduce && n && document.visibilityState === "visible") {
-      const s = div("shooter");
-      s.style.left = `${rand(25, 100)}%`;
-      s.style.top = `${rand(0, HORIZON - 70)}px`;
-      s.style.setProperty("--len", `${rand(80, 150)}px`);
-      shooting.append(s);
-      setTimeout(() => s.remove(), 1800);
+      const k = Math.random() < 0.35 ? 2 : 1;
+      for (let j = 0; j < k; j++) {
+        const s = div("shooter");
+        s.style.left = `${rand(30, 105)}%`;
+        s.style.top = `${rand(-10, HORIZON - 40)}px`;
+        s.style.setProperty("--len", `${rand(120, 220)}px`);
+        s.style.animationDelay = `${j * rand(0.2, 0.6)}s`;
+        shooting.append(s);
+        setTimeout(() => s.remove(), 2600);
+      }
     }
-    setTimeout(shoot, n ? rand(2500, 8000) : 5000);
+    setTimeout(shoot, n ? rand(1400, 4500) : 5000);
   }
   setTimeout(shoot, 1200);
 
@@ -184,7 +201,7 @@
       const [top, mid, horizon, far, midM, near, ground, cloud] = palette(e, dark);
       const st = body.style;
       [["--sky-top", top], ["--sky-mid", mid], ["--sky-horizon", horizon], ["--mtn-far", far], ["--mtn-mid", midM],
-       ["--mtn-near", near], ["--ground", ground], ["--cloud", cloud]].forEach(([k, v]) => st.setProperty(k, v));
+       ["--mtn-near", near], ["--ground", ground], ["--cloud", cloud], ["--cloud-shade", mix(far, "#ffffff", 0.35)], ["--cloud-top", mix("#ffffff", far, clamp((-e + 2) / 12) * 0.55)]].forEach(([k, v]) => st.setProperty(k, v));
 
       // Sun: warmer and bigger-glowing near the horizon.
       const sunFrac = (ms - today.rise) / (today.set - today.rise);
@@ -217,7 +234,7 @@
       moon.dataset.phase = p.toFixed(2);
 
       aurora.style.opacity = (night * 0.85).toFixed(2);
-      stars.style.opacity = clamp((-e + 1) / 9).toFixed(2);
+      stars.style.opacity = Math.max(0.32, clamp((-e + 1) / 9)).toFixed(2);
       return period;
     },
   };
