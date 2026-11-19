@@ -89,9 +89,27 @@
       <div class="meal-body" id="moveBody" hidden>
         <ol id="moveSteps"></ol>
       </div>
+      <p class="move-note" id="moveNote" hidden></p>
       <div class="meal-actions one">
         <button class="btn" id="moveDone" type="button">Done</button>
       </div>
+    </section>
+
+    <section class="card cycle" id="cycle">
+      <p class="label"><span class="emo">🌺</span>Cycle</p>
+      <p class="cycle-big" id="cycleBig"></p>
+      <p class="hint" id="cycleSub"></p>
+      <div id="cycleToday" hidden>
+        <p class="cycle-h">Flow</p>
+        <div class="chips" id="flowChips"></div>
+        <p class="cycle-h">How you feel</p>
+        <div class="chips" id="symChips"></div>
+      </div>
+      <div class="meal-actions">
+        <button class="btn" id="cycleToggle" type="button">My period started</button>
+        <button class="btn soft-btn" id="cycleEdit" type="button">Edit past days</button>
+      </div>
+      <p class="hint" id="cycleEditHint" hidden>Tap days in "Last 4 weeks" below to mark or unmark period days. Tap Done when finished.</p>
     </section>
 
     <section id="routine"></section>

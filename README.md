@@ -7,6 +7,7 @@ A quiet daily discipline log for your phone. Plain HTML, CSS and JavaScript, no 
 - **Sleep shift**: wake-up moves 15 minutes earlier every 3 days, from 9:30 to 8:00, and lights-out moves with it.
 - **Never miss twice**: a missed day gets a gentle nudge instead of a zeroed streak.
 - **A recipe for every meal** (`recipes.json`) and **a workout for every day** (`workouts.json`).
+- **Cycle tracker**: log period days, flow and how you feel, and see a prediction from your own history. Stays on the phone and is never sent in reminders.
 - **Today's one thing**: one line each morning.
 - **No-phone time**: a 30, 60 or 90 minute timer with a slow breathing circle.
 - **Evening check-in**: what went well, and one thing to do better tomorrow.

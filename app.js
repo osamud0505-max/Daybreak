@@ -7,7 +7,7 @@
   const MEAL_TASK = { breakfast: "breakfast", lunch: "lunch", dinner: "dinner" };
 
   // ---------- storage ----------
-  const blank = () => ({ log: {}, timer: null, firstDay: null, meal: {} });
+  const blank = () => ({ log: {}, timer: null, firstDay: null, meal: {}, cycle: { days: {} } });
   function load() {
     try {
       const raw = localStorage.getItem(KEY);
@@ -260,6 +260,12 @@
     $("moveTime").textContent = `· ${c.w.time}`;
     $("moveName").textContent = c.w.name;
     $("moveSteps").replaceChildren(...c.w.steps.map((s) => el("li", { textContent: s })));
+    const pDay = cyc().days[todayKey()] ? periodDayNumber(todayKey()) : 0;
+    const heavy = pDay && (cyc().days[todayKey()].flow === "heavy" || (cyc().days[todayKey()].sym || []).includes("cramps"));
+    $("moveNote").hidden = !(pDay && (pDay <= 2 || heavy));
+    $("moveNote").textContent = c.task === "gym"
+      ? "🌷 Period day: it's okay to swap tonight for an easy walk or the bedtime stretch. Showing up gently still counts."
+      : "🌷 Period day: go slow, skip anything that hurts.";
     const done = isDone(c.task, todayKey());
     $("moveDone").textContent = done ? "Done ✓" : "Done";
     $("moveDone").disabled = done;
@@ -285,6 +291,84 @@
       ? "You've reached your target. Keep it steady, weekends too."
       : `Moving 15 min earlier every 3 days. ${fmtTime(routine.sleep.targetWake)} by ${by}.`;
   }
+
+  // ---------- cycle (stays on this phone only; never sent in reminders) ----------
+  const FLOWS = [["spotting", "Spotting"], ["light", "Light"], ["medium", "Medium"], ["heavy", "Heavy"]];
+  const SYMS = [["cramps", "Cramps"], ["tired", "Tired"], ["headache", "Headache"], ["bloated", "Bloated"],
+    ["moody", "Moody"], ["cravings", "Cravings"], ["back", "Back pain"], ["fine", "Feeling fine"]];
+  let cycleEditing = false;
+  const cyc = () => (state.cycle ||= { days: {} });
+  const isPeriod = (k) => !!cyc().days[k];
+  const parseKey = (k) => { const [y, m, d] = k.split("-").map(Number); return new Date(y, m - 1, d); };
+  const dayDiff = (a, b) => Math.round((parseKey(b) - parseKey(a)) / 86400000);
+
+  function cycleStats() {
+    const keys = Object.keys(cyc().days).sort();
+    const starts = keys.filter((k) => !isPeriod(keyOf(shift(parseKey(k), -1))));
+    const gaps = starts.slice(1).map((k, i) => dayDiff(starts[i], k)).filter((g) => g >= 18 && g <= 45);
+    const avgCycle = gaps.length ? Math.round(gaps.reduce((a, b) => a + b, 0) / gaps.length) : 28;
+    const lengths = starts.map((st) => { let n = 0; let d = parseKey(st); while (isPeriod(keyOf(d))) { n++; d = shift(d, 1); } return n; });
+    const avgLen = lengths.length ? Math.max(3, Math.round(lengths.reduce((a, b) => a + b, 0) / lengths.length)) : 5;
+    const last = starts[starts.length - 1] || null;
+    let next = last ? shift(parseKey(last), avgCycle) : null;
+    while (next && keyOf(next) < todayKey() && !isPeriod(todayKey()) && dayDiff(keyOf(next), todayKey()) > 7) next = shift(next, avgCycle);
+    return { starts, avgCycle, avgLen, last, next, learned: gaps.length };
+  }
+  function periodDayNumber(k) { let n = 0; let d = parseKey(k); while (isPeriod(keyOf(d))) { n++; d = shift(d, -1); } return n; }
+  const predictedKeys = () => {
+    const { next, avgLen } = cycleStats();
+    if (!next) return new Set();
+    return new Set(Array.from({ length: avgLen }, (_, i) => keyOf(shift(next, i))));
+  };
+
+  function renderCycle() {
+    const tk = todayKey();
+    const st = cycleStats();
+    const today = cyc().days[tk];
+    $("cycleToday").hidden = !today;
+    if (today) {
+      const n = periodDayNumber(tk);
+      $("cycleBig").textContent = `Period day ${n} 🌷`;
+      $("cycleSub").textContent = n <= 2
+        ? "Be gentle with yourself. Warm drink, water, and a lighter workout is still a win."
+        : "Keep drinking water. Light movement can ease cramps.";
+      $("cycleToggle").textContent = "Not on my period today";
+      const chips = (box, opts, isOn, onTap) => $(box).replaceChildren(...opts.map(([id, label]) => {
+        const b = el("button", { type: "button", className: `chip${isOn(id) ? " on" : ""}`, textContent: label });
+        b.addEventListener("click", () => { onTap(id); save(); renderCycle(); renderMove(); });
+        return b;
+      }));
+      chips("flowChips", FLOWS, (id) => today.flow === id, (id) => { today.flow = today.flow === id ? null : id; });
+      chips("symChips", SYMS, (id) => (today.sym || []).includes(id), (id) => {
+        today.sym = (today.sym || []).includes(id) ? today.sym.filter((x) => x !== id) : [...(today.sym || []), id];
+      });
+    } else {
+      $("cycleToggle").textContent = isPeriod(keyOf(shift(new Date(), -1))) ? "Still on my period" : "My period started";
+      if (!st.next) {
+        $("cycleBig").textContent = "Log your next period";
+        $("cycleSub").textContent = "Tap the button on the day it starts. You can add past days with Edit past days, so predictions start sooner.";
+      } else {
+        const days = dayDiff(tk, keyOf(st.next));
+        const when = st.next.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+        $("cycleBig").textContent = days > 0 ? `Next period in about ${days} day${days === 1 ? "" : "s"}` : days === 0 ? "Period expected today" : `Period ${-days} day${days === -1 ? "" : "s"} late`;
+        $("cycleSub").textContent = `Around ${when}. Based on ${st.learned ? `your average ${st.avgCycle}-day cycle` : "a typical 28-day cycle until you've logged two"}.` +
+          (days > 0 && days <= 3 ? " Pack supplies in your bag. 🎒" : "");
+      }
+    }
+    $("cycleEdit").textContent = cycleEditing ? "Done" : "Edit past days";
+    $("cycleEditHint").hidden = !cycleEditing;
+  }
+  $("cycleToggle").addEventListener("click", () => {
+    const tk = todayKey();
+    if (cyc().days[tk]) delete cyc().days[tk];
+    else cyc().days[tk] = { flow: null, sym: [] };
+    save(); renderCycle(); renderMonth(); renderMove();
+  });
+  $("cycleEdit").addEventListener("click", () => {
+    cycleEditing = !cycleEditing;
+    renderCycle(); renderMonth();
+    if (cycleEditing) $("month").scrollIntoView({ behavior: "smooth", block: "center" });
+  });
 
   // ---------- routine ----------
   const openBlocks = {};
@@ -402,6 +486,8 @@
   function renderMonth() {
     const m = $("month");
     m.replaceChildren();
+    m.classList.toggle("editing", cycleEditing);
+    const predicted = predictedKeys();
     const tk = todayKey();
     for (let i = 27; i >= 0; i--) {
       const d = shift(new Date(), -i);
@@ -417,6 +503,12 @@
         if (n === total) cell.textContent = "🌸";
       }
       cell.title = `${k}: ${n} of ${total}`;
+      if (isPeriod(k)) cell.classList.add("period");
+      else if (predicted.has(k)) cell.classList.add("predicted");
+      if (cycleEditing) cell.addEventListener("click", () => {
+        if (isPeriod(k)) delete cyc().days[k]; else cyc().days[k] = { flow: null, sym: [] };
+        save(); renderMonth(); renderCycle();
+      });
       m.append(cell);
     }
   }
@@ -447,7 +539,7 @@
   // ---------- go ----------
   function renderAll() {
     renderSky(); renderHeader(); renderNow(); renderSleep(); renderPlan(); renderMeal(); renderMove();
-    renderRoutine(); renderFocus(); renderEvening(); renderMonth();
+    renderCycle(); renderRoutine(); renderFocus(); renderEvening(); renderMonth();
   }
 
   async function boot() {
