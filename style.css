@@ -40,13 +40,7 @@
   --sans: "Nunito", system-ui, -apple-system, sans-serif;
 }
 
-body[data-period="dawn"]  { --sky-top: #c9d8ff; --sky-mid: #ffd3e4; --sky-bottom: #fdf6fb; }
-body[data-period="day"]   { --sky-top: #a9d4ff; --sky-mid: #d3e9ff; --sky-bottom: #fdf6fb; }
-body[data-period="dusk"]  { --sky-top: #9f8fe0; --sky-mid: #f5b8cf; --sky-bottom: #fde9e6; }
-body[data-period="night"] { --sky-top: #3b3672; --sky-mid: #7e74b8; --sky-bottom: #f1ecfb; }
-body[data-period="night"] .date, body[data-period="dusk"] .date { color: #fff; text-shadow: 0 2px 12px rgba(40, 30, 90, .35); }
 .count { color: var(--ink); }
-body[data-period="night"] .greeting, body[data-period="dusk"] .greeting { color: rgba(255, 255, 255, .85); }
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -73,10 +67,6 @@ body[data-period="night"] .greeting, body[data-period="dusk"] .greeting { color:
     --shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
     --pearl-1: #7a4a6e; --pearl-2: #5e4a8e; --pearl-3: #3e5a84; --pearl-4: #3d6a5c; --pearl-5: #7a6a3e;
   }
-  body[data-period] { --sky-top: #2a2350; --sky-mid: #3a2f62; --sky-bottom: #221c33; }
-  body[data-period="dawn"] { --sky-top: #3a2f62; --sky-mid: #5a3a64; }
-  body[data-period="day"] { --sky-top: #2f3f6e; --sky-mid: #3b3a6a; }
-  body[data-period="dusk"] { --sky-top: #2d2558; --sky-mid: #563a68; }
 }
 
 * { box-sizing: border-box; }
@@ -90,87 +80,6 @@ body {
   line-height: 1.45;
   min-height: 100dvh;
   -webkit-tap-highlight-color: transparent;
-}
-
-/* ---------- sky ---------- */
-.sky {
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 250px;
-  background: linear-gradient(var(--sky-top), var(--sky-mid, var(--sky-top)) 45%, var(--sky-bottom));
-  overflow: hidden;
-  z-index: 0;
-}
-/* sun */
-.celestial { position: absolute; z-index: 1; cursor: pointer; transition: top 1.2s ease, right 1.2s ease, opacity .8s; }
-.celestial svg { width: 100%; height: 100%; overflow: visible; }
-.celestial .blush { fill: #ffb3c7; opacity: .85; }
-.celestial .mouth { fill: none; stroke: #6b5582; stroke-width: 2.4; stroke-linecap: round; }
-.sun { width: 92px; height: 92px; right: 6%; top: 4px; animation: bob 6s ease-in-out infinite; }
-.sun .rays { fill: #ffe08a; transform-origin: 50px 50px; animation: spin 40s linear infinite; }
-.sun svg { filter: drop-shadow(0 0 10px rgba(255, 214, 110, .7)); }
-.sun .eyes { fill: #6b5582; transform-origin: 50px 47px; animation: blink 5s infinite; }
-.moon { width: 84px; height: 84px; right: 8%; top: 10px; animation: bob 8s ease-in-out infinite; display: none; }
-.moon svg { filter: drop-shadow(0 0 12px rgba(255, 244, 200, .65)); }
-.zz { position: absolute; left: 6px; top: 6px; font-family: var(--round); font-weight: 600; font-size: 14px; color: #fff5d6; opacity: 0; animation: zz 4s ease-in-out infinite; }
-.zz.z2 { animation-delay: 2s; font-size: 11px; }
-.celestial.wiggle { animation: wiggle .8s cubic-bezier(.3, 1.6, .5, 1); }
-@keyframes bob { 50% { transform: translateY(5px); } }
-@keyframes spin { to { transform: rotate(360deg); } }
-@keyframes blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
-@keyframes zz { 0% { opacity: 0; transform: translate(0, 0) scale(.6); } 25% { opacity: .9; } 100% { opacity: 0; transform: translate(-14px, -26px) scale(1.1); } }
-@keyframes wiggle { 0% { transform: rotate(0) scale(1); } 30% { transform: rotate(-10deg) scale(1.12); } 60% { transform: rotate(8deg) scale(1.05); } 100% { transform: rotate(0) scale(1); } }
-
-/* clouds */
-.clouds { position: absolute; inset: 0; }
-.cloud { position: absolute; left: -130px; animation: drift 80s linear infinite; }
-.cloud svg { width: 100%; display: block; animation: floaty 5s ease-in-out infinite; overflow: visible; }
-.cloud .puff { fill: rgba(255, 255, 255, .92); filter: drop-shadow(0 4px 6px rgba(139, 106, 214, .12)); }
-.cloud .cface path { fill: none; stroke: #8e84a2; stroke-width: 2; stroke-linecap: round; }
-.cloud .blush { fill: #ffc9d9; }
-@keyframes drift { to { transform: translateX(calc(100vw + 260px)); } }
-@keyframes floaty { 50% { transform: translateY(-4px); } }
-@media (prefers-color-scheme: dark) { .cloud .puff { fill: rgba(255, 255, 255, .14); } .cloud .cface path { stroke: #d9d0ee; } }
-body[data-period="night"] .cloud .puff { fill: rgba(255, 255, 255, .5); }
-
-/* stars */
-.stars { position: absolute; inset: 0; opacity: 0; transition: opacity 1.5s; }
-.star { position: absolute; border-radius: 50%; background: #fff; box-shadow: 0 0 6px 1px rgba(255, 255, 255, .8); animation: twinkle 4s ease-in-out infinite; }
-.star.sparkly { background: none; box-shadow: none; }
-.star.sparkly svg { width: 100%; height: 100%; fill: #fff6d6; filter: drop-shadow(0 0 4px #fff3c4); }
-@keyframes twinkle { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .25; transform: scale(.7); } }
-.shooting { position: absolute; inset: 0; overflow: hidden; }
-.shooter {
-  position: absolute;
-  width: var(--len, 90px);
-  height: 2px;
-  border-radius: 2px;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0), #fff 70%, #fff8dc);
-  box-shadow: 0 0 8px rgba(255, 248, 220, .9);
-  transform: rotate(-24deg);
-  transform-origin: right center;
-  animation: shoot 1.4s ease-out forwards;
-}
-.shooter::after { content: ""; position: absolute; right: -2px; top: -2px; width: 6px; height: 6px; border-radius: 50%; background: #fff; box-shadow: 0 0 10px 3px #fff4c9; }
-@keyframes shoot {
-  0% { opacity: 0; transform: rotate(-24deg) translateX(0) scaleX(.2); }
-  15% { opacity: 1; transform: rotate(-24deg) translateX(-40px) scaleX(1); }
-  100% { opacity: 0; transform: rotate(-24deg) translateX(-260px) scaleX(.6); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .sun, .moon, .sun .rays, .sun .eyes, .cloud, .cloud svg, .star, .zz { animation: none !important; }
-  .cloud { left: 10%; }
-}
-
-.hills { position: absolute; bottom: 0; width: 100%; height: 90px; }
-.hill-back { fill: var(--hill-back); }
-.hill-front { fill: var(--hill-front); }
-.sky::after {
-  content: "";
-  position: absolute;
-  inset: auto 0 0 0;
-  height: 40px;
-  background: linear-gradient(transparent, var(--bg));
 }
 
 /* ---------- layout ---------- */
@@ -820,49 +729,158 @@ body:not([data-active="today"]) .progress { display: none; }
 .now-minor { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 10px; }
 .now-minor .link { font-size: 0.9rem; color: var(--ink-soft); }
 
-/* ---------- real-time sky ---------- */
-.sky { transition: background 2s; }
-.celestial { transition: top 2s ease, left 2s ease, opacity 2s; }
-.hills { z-index: 2; }
-.flowers { z-index: 3; }
-/* the sun warms to apricot near the horizon */
-.sun svg { filter: drop-shadow(0 0 calc(10px + var(--warm, 0) * 14px) rgba(255, calc(214 - var(--warm, 0) * 80), 110, .75)) saturate(calc(1 + var(--warm, 0) * .5)) hue-rotate(calc(var(--warm, 0) * -14deg)); }
+
+/* ---------- enchanted night: the dark look switches on after sunset ---------- */
+body.night {
+    --bg: #221c33;
+    --surface: #2c2541;
+    --ink: #f4eeff;
+    --ink-soft: #b3a8cc;
+    --line: rgba(231, 220, 255, 0.10);
+    --field: #241e37;
+    --pink: #4a2f48;   --pink-deep: #ff9cc4;
+    --peach: #4a3434;  --peach-deep: #ffb592;
+    --butter: #48412e; --butter-deep: #ffd86b;
+    --mint: #26433c;   --mint-deep: #7ee0b5;
+    --sky: #2a3a55;    --sky-deep: #8cc0ff;
+    --lilac: #3a2f5a;  --lilac-deep: #c2a8ff;
+    --primary: #c2a8ff;
+    --primary-ink: #241a3d;
+    --done: #7ee0b5;
+    --done-wash: #24423a;
+    --late: #ff9cc4;
+    --late-wash: #4a2f48;
+    --hill-back: #352b52;
+    --hill-front: #2c3b45;
+    --shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+    --pearl-1: #7a4a6e; --pearl-2: #5e4a8e; --pearl-3: #3e5a84; --pearl-4: #3d6a5c; --pearl-5: #7a6a3e;
+  }
+body.night .now .btn.big { color: #3a1f30; box-shadow: 0 4px 0 #b9688c; }
+body.night #meal .btn:not(.soft-btn),body.night #move .btn { color: #22192f; }
+body.night .breath-ring { background: radial-gradient(circle, #4a2f48, #2a3a55 55%, #3a2f5a 80%); }
+body.night .cycle .btn:not(.soft-btn) { color: #3a1f30; }
+body.night .chip.on { color: #3a1f30; }
+body.night .aligners .btn.big { color: #1c2740; }
+body.night .habit.done::before { background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, .12) 50%, transparent 65%); }
+
+/* ---------- dreamy full-screen sky ---------- */
+.sky {
+  position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
+  background: linear-gradient(var(--sky-top, #8fb8fb), var(--sky-mid, #cfe2ff) 160px, var(--sky-horizon, #fff1e6) 252px, var(--ground, #9fd0f8) 253px);
+  transition: background 2s;
+}
+.sky > * { position: absolute; }
+/* stars */
+.stars { inset: 0; transition: opacity 2s; }
+.star { position: absolute; border-radius: 50%; background: #fff; box-shadow: 0 0 6px 1px rgba(220, 230, 255, .8); animation: twinkle 4s ease-in-out infinite; }
+.star.sparkly { background: none; box-shadow: none; }
+.star.sparkly svg { width: 100%; height: 100%; fill: #fff7e0; filter: drop-shadow(0 0 5px #d8c8ff); }
+@keyframes twinkle { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .25; transform: scale(.7); } }
+/* blue shooting stars */
+.shooting { inset: 0; overflow: hidden; }
+.shooter {
+  position: absolute; width: var(--len, 110px); height: 2px; border-radius: 2px;
+  background: linear-gradient(90deg, rgba(120, 170, 255, 0), rgba(140, 190, 255, .7) 60%, #eaf3ff);
+  box-shadow: 0 0 10px rgba(130, 180, 255, .9);
+  transform: rotate(-32deg); transform-origin: right center;
+  animation: shoot 1.6s ease-out forwards;
+}
+.shooter::after { content: ""; position: absolute; right: -3px; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: #f2f7ff; box-shadow: 0 0 12px 4px rgba(150, 195, 255, .9); }
+@keyframes shoot {
+  0% { opacity: 0; transform: rotate(-32deg) translateX(0) scaleX(.2); }
+  15% { opacity: 1; transform: rotate(-32deg) translateX(-50px) scaleX(1); }
+  100% { opacity: 0; transform: rotate(-32deg) translateX(-320px) scaleX(.5); }
+}
+/* aurora ribbons */
+.night-aurora { inset: 0 0 auto 0; height: 250px; transition: opacity 3s; filter: blur(18px); }
+.night-aurora i {
+  position: absolute; left: -20%; width: 140%; height: 46px; border-radius: 50%;
+  background: linear-gradient(90deg, transparent, rgba(150, 255, 220, .45), rgba(170, 150, 255, .6), rgba(255, 160, 220, .45), transparent);
+  animation: ribbon 18s ease-in-out infinite alternate;
+}
+.night-aurora i:nth-child(1) { top: 26px; transform: rotate(-6deg); }
+.night-aurora i:nth-child(2) { top: 74px; transform: rotate(4deg); animation-duration: 24s; animation-delay: -8s; opacity: .7; }
+.night-aurora i:nth-child(3) { top: 120px; transform: rotate(-2deg); animation-duration: 30s; animation-delay: -15s; opacity: .45; }
+@keyframes ribbon { 0% { translate: -8% 0; scale: 1 .8; } 50% { translate: 6% 8px; scale: 1.1 1.25; } 100% { translate: -2% -6px; scale: .95 1; } }
+/* sun glow, beams and a faint rainbow */
 .sunglow {
-  position: absolute; width: 520px; height: 300px; transform: translate(-50%, -50%); pointer-events: none;
-  background: radial-gradient(closest-side, rgba(255, 214, 170, .85), rgba(255, 180, 196, .45) 45%, rgba(255, 190, 210, 0));
-  transition: opacity 2s, left 2s, top 2s; mix-blend-mode: screen;
+  width: 560px; height: 320px; transform: translate(-50%, -50%);
+  background: radial-gradient(closest-side, rgba(255, 226, 180, .9), rgba(255, 180, 200, .45) 45%, rgba(255, 190, 210, 0));
+  transition: opacity 2s, left 2s, top 2s;
 }
 .sunbeams {
-  position: absolute; width: 360px; height: 360px; transform: translate(-50%, -50%); pointer-events: none; border-radius: 50%;
-  background: repeating-conic-gradient(from 0deg, rgba(255, 250, 220, .5) 0 4deg, rgba(255, 250, 220, 0) 4deg 18deg);
+  width: 380px; height: 380px; transform: translate(-50%, -50%); border-radius: 50%;
+  background: repeating-conic-gradient(from 0deg, rgba(255, 250, 225, .5) 0 4deg, rgba(255, 250, 225, 0) 4deg 18deg);
   -webkit-mask: radial-gradient(closest-side, #000 20%, transparent); mask: radial-gradient(closest-side, #000 20%, transparent);
   animation: beams 90s linear infinite; transition: opacity 2s;
 }
 @keyframes beams { to { transform: translate(-50%, -50%) rotate(360deg); } }
-.rainbow { position: absolute; left: -6%; bottom: 40px; width: 62%; height: 120px; pointer-events: none; filter: blur(1.5px); transition: opacity 3s; }
+.rainbow { left: -8%; top: 120px; width: 64%; height: 120px; filter: blur(1.5px); transition: opacity 3s; }
 .rainbow svg { width: 100%; height: 100%; }
-.night-aurora { position: absolute; inset: 0; pointer-events: none; transition: opacity 3s; filter: blur(18px); }
-.night-aurora i {
-  position: absolute; left: -20%; width: 140%; height: 46px; border-radius: 50%;
-  background: linear-gradient(90deg, transparent, rgba(150, 255, 210, .55), rgba(190, 160, 255, .6), rgba(255, 170, 220, .45), transparent);
-  animation: ribbon 18s ease-in-out infinite alternate;
+/* sun and moon with soft halo rings */
+.celestial { z-index: 1; transition: top 2s ease, left 2s ease, opacity 2s; }
+.celestial svg { position: relative; width: 100%; height: 100%; overflow: visible; }
+.celestial .ring { position: absolute; left: 50%; top: 50%; border-radius: 50%; transform: translate(-50%, -50%); animation: ringpulse 7s ease-in-out infinite; }
+.celestial .r1 { width: 150%; height: 150%; background: rgba(255, 255, 255, .16); }
+.celestial .r2 { width: 210%; height: 210%; background: rgba(255, 255, 255, .09); animation-delay: -2s; }
+.celestial .r3 { width: 290%; height: 290%; background: rgba(255, 255, 255, .05); animation-delay: -4s; }
+@keyframes ringpulse { 50% { transform: translate(-50%, -50%) scale(1.06); } }
+.sun { width: 84px; height: 84px; }
+.sun svg { filter: drop-shadow(0 0 18px rgba(255, 220, 140, .85)); }
+.moon { width: 70px; height: 70px; }
+.moon svg { filter: drop-shadow(0 0 16px rgba(225, 210, 255, .9)); }
+.moon .r1 { background: rgba(225, 210, 255, .16); } .moon .r2 { background: rgba(225, 210, 255, .09); } .moon .r3 { background: rgba(225, 210, 255, .05); }
+.moon .moon-ghost { fill: rgba(235, 225, 255, .12); }
+.moon .craters circle { fill: rgba(190, 170, 235, .25); }
+.celestial.wiggle svg { animation: wiggle .8s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes wiggle { 0% { transform: rotate(0) scale(1); } 30% { transform: rotate(-10deg) scale(1.12); } 60% { transform: rotate(8deg) scale(1.05); } 100% { transform: rotate(0) scale(1); } }
+/* cloud banks + long streaks */
+.clouds { inset: 0 0 auto 0; height: 260px; }
+.cloud-bank { position: absolute; left: -360px; animation: drift 300s linear infinite; }
+.cloud-bank svg { width: 100%; height: 100%; display: block; }
+.cloud-bank path { fill: var(--cloud); }
+.streak { position: absolute; left: -60%; height: 7px; border-radius: 7px; background: var(--cloud); opacity: .75; animation: drift 240s linear infinite; }
+@keyframes drift { to { transform: translateX(calc(100vw + 720px)); } }
+/* layered mountains and hills */
+.land { left: 0; right: 0; top: 168px; bottom: 0; }
+.mtn { position: absolute; left: 0; width: 100%; height: 100px; }
+.mtn path { transition: fill 2s; }
+.mtn.far { top: 0; } .mtn.far path { fill: var(--mtn-far); }
+.mtn.mid { top: 22px; } .mtn.mid path { fill: var(--mtn-mid); }
+.mtn.near { top: 46px; } .mtn.near path { fill: var(--mtn-near); }
+.ground { position: absolute; left: -10%; right: -10%; top: 92px; bottom: 0; border-radius: 50% 50% 0 0 / 34px 34px 0 0;
+  background: linear-gradient(var(--ground), color-mix(in srgb, var(--ground) 70%, var(--sky-top)) 260px, color-mix(in srgb, var(--ground) 45%, var(--sky-top))); }
+.ground .shine { position: absolute; left: 22%; top: 8px; width: 46%; height: 10px; border-radius: 50%; background: rgba(255, 255, 255, .35); filter: blur(1px); }
+.ground .mist { position: absolute; left: 0; right: 0; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, .14); filter: blur(10px); }
+.ground .m1 { top: 160px; } .ground .m2 { top: 360px; }
+@media (prefers-reduced-motion: reduce) {
+  .sunbeams, .night-aurora i, .celestial .ring, .cloud-bank, .streak, .star { animation: none !important; }
+  .cloud-bank, .streak { left: 10%; }
 }
-.night-aurora i:nth-child(1) { top: 30px; transform: rotate(-6deg); }
-.night-aurora i:nth-child(2) { top: 78px; transform: rotate(4deg); animation-duration: 24s; animation-delay: -8s; opacity: .7; }
-.night-aurora i:nth-child(3) { top: 120px; transform: rotate(-2deg); animation-duration: 30s; animation-delay: -15s; opacity: .45; }
-@keyframes ribbon { 0% { translate: -8% 0; scale: 1 .8; } 50% { translate: 6% 8px; scale: 1.1 1.25; } 100% { translate: -2% -6px; scale: .95 1; } }
-.moon .moon-ghost { fill: rgba(255, 250, 230, .14); }
-.moon-halo {
-  position: absolute; inset: -34px; border-radius: 50%; pointer-events: none;
-  background: radial-gradient(closest-side, rgba(255, 246, 210, .35), rgba(210, 190, 255, .18) 60%, transparent);
-  animation: halo 6s ease-in-out infinite;
+/* header text sits right on the sky */
+.date, .greeting { transition: color 2s; }
+body.twilight .date { color: #fff; }
+body.twilight .greeting { color: rgba(255, 255, 255, .88); }
+.date, .greeting { text-shadow: 0 1px 2px rgba(255, 255, 255, .25); }
+body.twilight .date, body.twilight .greeting { text-shadow: 0 1px 3px rgba(18, 14, 40, .6), 0 2px 14px rgba(18, 14, 40, .45); }
+@media (prefers-color-scheme: dark) { .date, .greeting { color: #fff; text-shadow: 0 1px 3px rgba(18, 14, 40, .6), 0 2px 14px rgba(18, 14, 40, .45); } }
+body::before { display: none; }
+body { background: var(--sky-top, var(--bg)); }
+
+/* ---------- glass cards ---------- */
+.card {
+  --card-bg: color-mix(in srgb, var(--tint) 34%, rgba(255, 255, 255, .74));
+  -webkit-backdrop-filter: blur(14px) saturate(1.15); backdrop-filter: blur(14px) saturate(1.15);
 }
-@keyframes halo { 50% { transform: scale(1.12); opacity: .7; } }
-@media (prefers-reduced-motion: reduce) { .sunbeams, .night-aurora i, .moon-halo { animation: none !important; } }
-/* keep the date readable when the sun or moon passes behind it */
-body[data-period="night"] .date, body[data-period="dusk"] .date { text-shadow: 0 1px 3px rgba(30, 22, 70, .45), 0 2px 14px rgba(30, 22, 70, .4); }
-@media (prefers-color-scheme: dark) {
-  .date, .greeting { text-shadow: 0 1px 3px rgba(18, 14, 40, .7), 0 2px 14px rgba(18, 14, 40, .55); }
-  .sunbeams { filter: opacity(.45); }
-  .rainbow { filter: blur(1.5px) opacity(.6); }
+@media (prefers-color-scheme: dark) { .card { --card-bg: color-mix(in srgb, var(--tint) 40%, rgba(34, 27, 66, .66)); } }
+/* enchanted night: deep violet glass with a soft glowing edge */
+body.night {
+  --surface: #2a2350;
+  --pearl-1: #c79bff; --pearl-2: #8fb4ff; --pearl-3: #ff9fd6; --pearl-4: #9ff0e0; --pearl-5: #b9a2ff;
+  --shadow: 0 0 22px rgba(150, 120, 255, .28), 0 6px 18px rgba(10, 6, 30, .35);
 }
+body.night .card { --card-bg: color-mix(in srgb, var(--tint) 38%, rgba(30, 24, 66, .62)); }
+body.night .tabbar { background: rgba(34, 27, 70, .72); border-color: rgba(200, 180, 255, .25); }
+
+/* leave a window onto the sky above the first card */
+header.top { margin-bottom: 70px; }
