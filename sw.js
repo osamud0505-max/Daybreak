@@ -1,5 +1,5 @@
 // Offline support: cache the app shell, serve it network-first so updates arrive.
-const CACHE = "daybreak-v11";
+const CACHE = "daybreak-v12";
 const SHELL = ["./", "index.html", "style.css", "app.js", "routine.json", "recipes.json", "workouts.json", "schedule.js", "icons.js", "sound.js", "sky.js", "fairy.js", "manifest.webmanifest", "icons/icon.svg", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png"];
 
 self.addEventListener("install", (e) => {
@@ -24,6 +24,6 @@ self.addEventListener("fetch", (e) => {
         }
         return res;
       })
-      .catch(() => caches.match(e.request).then((r) => r || caches.match("index.html")))
+      .catch(() => caches.match(e.request, { ignoreSearch: true }).then((r) => r || caches.match("index.html")))
   );
 });

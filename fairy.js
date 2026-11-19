@@ -6,6 +6,8 @@
   const cv = document.createElement("canvas");
   cv.className = "fairy-dust";
   cv.setAttribute("aria-hidden", "true");
+  // Inline styles so the canvas can never take up space, even if an old stylesheet is cached.
+  Object.assign(cv.style, { position: "fixed", left: "0", top: "0", width: "100vw", height: "100vh", zIndex: "1", pointerEvents: "none" });
   document.body.prepend(cv);
   const g = cv.getContext("2d");
   let W = 0, H = 0, dpr = 1;
