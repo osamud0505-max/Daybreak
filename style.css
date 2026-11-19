@@ -1133,7 +1133,7 @@ details.block > summary h2 { letter-spacing: .06em; }
 section[data-tab="me"] > .section-head h2 { color: #fff; text-shadow: 0 0 10px rgba(110, 80, 210, .8); }
 
 /* sky extras */
-.cloud-sea { left: -6%; width: 112%; top: 214px; height: 66px; -webkit-mask: linear-gradient(#000 55%, transparent); mask: linear-gradient(#000 55%, transparent); animation: seadrift 40s ease-in-out infinite alternate; will-change: transform; }
+.cloud-sea { left: -6%; width: 112%; top: 178px; height: 104px; -webkit-mask: linear-gradient(#000 55%, transparent); mask: linear-gradient(#000 55%, transparent); animation: seadrift 40s ease-in-out infinite alternate; will-change: transform; }
 .cloud-sea svg { width: 100%; height: 100%; display: block; }
 .cloud-sea .sea-back { fill: var(--cloud); opacity: .75; }
 @keyframes seadrift { to { transform: translateX(-4%); } }

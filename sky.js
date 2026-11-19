@@ -131,7 +131,7 @@
   // A sea of big fluffy clouds resting on the hills, and glints that pop all over the sky.
   const puff = (seed, n) => { let d = ""; for (let i = 0; i < n; i++) { const x = (i / (n - 1)) * 800 + ((seed * (i + 3) * 37) % 40) - 20;
       const r = 34 + ((seed * (i + 7) * 53) % 38); d += `<circle cx="${x.toFixed(0)}" cy="${(96 - r * 0.55).toFixed(0)}" r="${r}"/>`; } return d; };
-  const cloudSea = div("cloud-sea", `<svg viewBox="0 0 800 110" preserveAspectRatio="none"><defs>
+  const cloudSea = div("cloud-sea", `<svg viewBox="0 -60 800 170" preserveAspectRatio="xMidYMax slice"><defs>
       <linearGradient id="seaA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--cloud-top)"/><stop offset="1" stop-color="var(--cloud-shade)"/></linearGradient></defs>
       <g class="sea-back">${puff(3, 13)}</g><g class="sea-front" fill="url(#seaA)">${puff(7, 15)}</g></svg>`);
   const glints = div("glints");

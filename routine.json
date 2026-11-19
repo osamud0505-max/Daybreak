@@ -14,12 +14,13 @@
     {
       "id": "wake",
       "name": "Out of bed",
-      "push": "Feet on the floor. Don't negotiate with the bed. Open Daybreak and press Done. It'll walk you through the morning one step at a time.",
-      "priority": "max",
+      "push": "Good morning. If you're up, open Daybreak and tap Done. It'll walk you through the morning one step at a time.",
+      "priority": "default",
       "icon": "sun",
       "anchor": "wake",
       "offset": 0,
-      "dur": 5
+      "dur": 5,
+      "pushDelay": 3
     },
     {
       "id": "teeth-am",
@@ -296,7 +297,7 @@
       "id": "phone-away",
       "name": "Phone away, lights out",
       "push": "Phone across the room, alarm across the room too. Lights out.",
-      "priority": "high",
+      "priority": "default",
       "icon": "phoneoff",
       "anchor": "lightsOut",
       "offset": 0,
