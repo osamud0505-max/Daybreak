@@ -57,7 +57,8 @@ for (const t of globalThis.DaybreakSchedule.tasksFor(routine, dateKey)) {
     Title: t.dur ? `${t.name} · ${t.dur >= 60 ? `${Math.floor(t.dur / 60)} h${t.dur % 60 ? ` ${t.dur % 60} min` : ""}` : `${t.dur} min`}` : t.name,
     At: String(Math.floor(at / 1000)),
     Click: appUrl,
-    Tags: "sunrise",
+    // Daybreak's own icon on every reminder (no emoji tags).
+    Icon: new URL("icons/icon-192.png", appUrl.endsWith("/") ? appUrl : appUrl + "/").href,
     Priority: ["max", "high"].includes(t.priority) ? t.priority : "default",
   };
   if (dryRun) {
