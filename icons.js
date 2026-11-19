@@ -19,6 +19,7 @@
     pot: '<path d="M5 10.5h14v5a3.5 3.5 0 0 1-3.5 3.5h-7A3.5 3.5 0 0 1 5 15.5z"/><path d="M3 10.5h18M10 7.5h4M9 5c.6.6.6 1.4 0 2M15 5c.6.6.6 1.4 0 2"/>',
     pencil: '<path d="M15.5 5.5l3 3L9 18l-4 1 1-4z"/><path d="M13.5 7.5l3 3"/>',
     dumbbell: '<path d="M8 12h8"/><rect x="4.5" y="8" width="3.5" height="8" rx="1.4"/><rect x="16" y="8" width="3.5" height="8" rx="1.4"/><path d="M3 10.5v3M21 10.5v3"/>',
+    pill: '<rect x="3.5" y="8.5" width="17" height="7" rx="3.5" transform="rotate(-35 12 12)"/><path d="M9.9 9 14.1 15"/><circle cx="18.5" cy="18.5" r="1.6"/>',
     drop: '<path d="M12 4s5.5 6 5.5 9.5a5.5 5.5 0 0 1-11 0C6.5 10 12 4 12 4z"/><path d="M9.6 14a2.4 2.4 0 0 0 2.4 2.4"/>',
     cloud: '<path d="M7.5 18h9a3.5 3.5 0 0 0 .4-7 5 5 0 0 0-9.7 1A3 3 0 0 0 7.5 18z"/>',
     thought: '<path d="M8 15h8a3 3 0 0 0 .3-6 4.5 4.5 0 0 0-8.7.8A2.6 2.6 0 0 0 8 15z"/><circle cx="7" cy="18.5" r="1.1"/><circle cx="4.8" cy="20.6" r=".7"/>',

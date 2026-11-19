@@ -68,6 +68,14 @@
       "icon": "bowl"
     },
     {
+      "id": "vitamins",
+      "anchor": "wake",
+      "offset": 55,
+      "name": "Vitamin D + C",
+      "push": "Vitamin D and C now, with breakfast. Vitamin D absorbs best with food.",
+      "icon": "pill"
+    },
+    {
       "id": "plan",
       "anchor": "wake",
       "offset": 65,
