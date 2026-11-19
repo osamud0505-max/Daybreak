@@ -966,3 +966,30 @@ main.wrap .now.active .btn.big { background-image: linear-gradient(180deg, rgba(
 .soft-btn { background: var(--glass-row) !important; border: 1.5px solid var(--row-edge); }
 input[type="text"], textarea { background: var(--glass-row); border-color: var(--row-edge); }
 @media (prefers-reduced-motion: reduce) { .card::before, .card::after, .banner::after { animation: none !important; } .card::after { display: none; } }
+
+/* ---------- smooth scrolling: keep the magic, drop the expensive parts ----------
+   Live blur behind every box and constantly repainted borders made phones drop frames.
+   Boxes now use a near-opaque frosted fill instead of a live blur, and only cheap
+   (transform/opacity) animations keep running. */
+.card, .banner, details.block > summary.section-head, .habit {
+  -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+}
+.card { animation: none; contain: paint; }
+.card { --card-bg: color-mix(in srgb, var(--tint) 34%, rgba(255, 255, 255, .9)); }
+body.night .card { --card-bg: color-mix(in srgb, var(--tint) 30%, rgba(36, 28, 78, .9)); }
+@media (prefers-color-scheme: dark) { .card { --card-bg: color-mix(in srgb, var(--tint) 34%, rgba(36, 28, 72, .9)); } }
+:root { --glass-row: linear-gradient(135deg, rgba(255, 255, 255, .92), rgba(255, 255, 255, .78)); }
+body.night, :root:has(body.night) { --glass-row: linear-gradient(135deg, rgba(74, 60, 146, .92), rgba(40, 32, 84, .9)); }
+@media (prefers-color-scheme: dark) { :root { --glass-row: linear-gradient(135deg, rgba(74, 60, 146, .92), rgba(40, 32, 84, .9)); } }
+.card::before { animation: none; }
+.card::after { display: none; }
+.now::after { display: block; will-change: transform; }
+.habit.done::before { animation: none; display: none; }
+.habit { contain: paint; }
+.tabbar { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(255, 255, 255, .94); }
+body.night .tabbar { background: rgba(34, 27, 70, .95); }
+/* sky: no animated blur filters; layers get their own GPU layer */
+.night-aurora { filter: none; }
+.night-aurora i { filter: blur(14px); will-change: transform; }
+.sky .stars, .sky .clouds, .sunbeams, .celestial, .cloud-bank, .streak { will-change: transform; }
+.rainbow { filter: none; }

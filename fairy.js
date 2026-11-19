@@ -12,7 +12,7 @@
   const g = cv.getContext("2d");
   let W = 0, H = 0, dpr = 1;
   function size() {
-    dpr = Math.min(2, window.devicePixelRatio || 1);
+    dpr = Math.min(1.5, window.devicePixelRatio || 1);
     W = window.innerWidth; H = window.innerHeight;
     cv.width = W * dpr; cv.height = H * dpr;
     g.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -42,7 +42,7 @@
       star: !firefly && Math.random() < 0.25,
     };
   }
-  const COUNT = () => (night() ? 34 : 26);
+  const COUNT = () => (night() ? 22 : 16);
   let motes = Array.from({ length: COUNT() }, () => mote(true));
 
   function drawStar(x, y, r, a, color) {
@@ -82,9 +82,12 @@
   }
 
   let running = false;
-  function loop() {
+  // ~30 fps is plenty for slow drifting dust, and it pauses while you scroll so scrolling stays smooth.
+  let lastDraw = 0, scrollingUntil = 0;
+  window.addEventListener("scroll", () => { scrollingUntil = performance.now() + 250; }, { passive: true });
+  function loop(ts) {
     if (!running) return;
-    frame();
+    if (ts - lastDraw > 32 && ts > scrollingUntil) { lastDraw = ts; frame(); }
     requestAnimationFrame(loop);
   }
   function setRunning() {

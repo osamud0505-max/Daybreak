@@ -74,7 +74,7 @@
 
   // ---------- layers (back to front) ----------
   const stars = div("stars");
-  for (let i = 0; i < 70; i++) {
+  for (let i = 0; i < 46; i++) {
     const sparkle = i % 6 === 0;
     const st = div(sparkle ? "star sparkly" : "star",
       sparkle ? '<svg viewBox="0 0 24 24"><path d="M12 1c.8 6 3.6 9.6 11 11-7.4 1.4-10.2 5-11 11-.8-6-3.6-9.6-11-11 7.4-1.4 10.2-5 11-11z"/></svg>' : "");
