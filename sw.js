@@ -1,6 +1,6 @@
 // Offline support: cache the app shell, serve it network-first so updates arrive.
-const CACHE = "daybreak-v10";
-const SHELL = ["./", "index.html", "style.css", "app.js", "routine.json", "recipes.json", "workouts.json", "schedule.js", "icons.js", "sound.js", "sky.js", "manifest.webmanifest", "icons/icon.svg", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png"];
+const CACHE = "daybreak-v11";
+const SHELL = ["./", "index.html", "style.css", "app.js", "routine.json", "recipes.json", "workouts.json", "schedule.js", "icons.js", "sound.js", "sky.js", "fairy.js", "manifest.webmanifest", "icons/icon.svg", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));

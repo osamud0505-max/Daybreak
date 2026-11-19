@@ -34,6 +34,7 @@
   --hill-front: #d9f2e6;
 
   --radius: 24px;
+  --pearl-1: #ffc4dc; --pearl-2: #dcc8ff; --pearl-3: #bfe2ff; --pearl-4: #c4f2dc; --pearl-5: #fff0b8;
   --shadow: 0 6px 18px rgba(139, 106, 214, 0.10), 0 1px 3px rgba(139, 106, 214, 0.08);
   --round: "Fredoka", "Nunito", system-ui, sans-serif;
   --sans: "Nunito", system-ui, -apple-system, sans-serif;
@@ -70,6 +71,7 @@ body[data-period="night"] .greeting, body[data-period="dusk"] .greeting { color:
     --hill-back: #352b52;
     --hill-front: #2c3b45;
     --shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+    --pearl-1: #7a4a6e; --pearl-2: #5e4a8e; --pearl-3: #3e5a84; --pearl-4: #3d6a5c; --pearl-5: #7a6a3e;
   }
   body[data-period] { --sky-top: #2a2350; --sky-mid: #3a2f62; --sky-bottom: #221c33; }
   body[data-period="dawn"] { --sky-top: #3a2f62; --sky-mid: #5a3a64; }
@@ -178,7 +180,7 @@ body[data-period="dusk"] .stars { opacity: .6; }
 /* ---------- layout ---------- */
 .wrap {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   max-width: 460px;
   margin: 0 auto;
   padding: max(26px, env(safe-area-inset-top)) 16px calc(40px + env(safe-area-inset-bottom));
@@ -228,8 +230,14 @@ body[data-period="dusk"] .stars { opacity: .6; }
 .card {
   --tint: var(--lilac);
   --tint-deep: var(--lilac-deep);
-  background: color-mix(in srgb, var(--tint) 45%, var(--surface));
-  border: 2px solid color-mix(in srgb, var(--tint) 80%, var(--surface));
+  --card-bg: color-mix(in srgb, var(--tint) 45%, var(--surface));
+  /* pearly, slowly shifting rainbow edge */
+  background:
+    linear-gradient(var(--card-bg), var(--card-bg)) padding-box,
+    linear-gradient(120deg, var(--pearl-1), var(--pearl-2), var(--pearl-3), var(--pearl-4), var(--pearl-5), var(--pearl-1)) border-box;
+  background-size: 100% 100%, 300% 300%;
+  animation: pearl 14s linear infinite;
+  border: 2px solid transparent;
   border-radius: var(--radius);
   padding: 18px;
   box-shadow: var(--shadow);
@@ -699,5 +707,58 @@ h2 .emo { display: inline-flex; margin-right: 8px; color: var(--tint-deep, var(-
   100% { opacity: 0; transform: translate(-50%, -60%) scale(.95); }
 }
 .sound-btn { display: inline-flex; align-items: center; gap: 4px; }
+
+/* ---------- fairy aesthetic ---------- */
+.fairy-dust { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 1; pointer-events: none; }
+@keyframes pearl { to { background-position: 0 0, 300% 0; } }
+/* dreamy aurora glow drifting behind everything */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -20%;
+  z-index: -1;
+  background:
+    radial-gradient(40% 30% at 20% 40%, color-mix(in srgb, var(--pink) 70%, transparent), transparent 70%),
+    radial-gradient(35% 30% at 80% 55%, color-mix(in srgb, var(--lilac) 75%, transparent), transparent 70%),
+    radial-gradient(40% 30% at 40% 85%, color-mix(in srgb, var(--mint) 65%, transparent), transparent 70%),
+    radial-gradient(30% 25% at 75% 15%, color-mix(in srgb, var(--sky) 60%, transparent), transparent 70%);
+  animation: aurora 40s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes aurora {
+  0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  50% { transform: translate(4%, -3%) rotate(6deg) scale(1.08); }
+  100% { transform: translate(-4%, 3%) rotate(-5deg) scale(1.02); }
+}
+body { background: var(--bg); isolation: isolate; }
+/* pearly sheen on buttons */
+.btn { background-image: linear-gradient(180deg, rgba(255, 255, 255, .38), rgba(255, 255, 255, 0) 55%); }
+/* done rows get a slow magic shimmer */
+.habit { position: relative; overflow: hidden; }
+.habit.done::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, .55) 50%, transparent 65%);
+  transform: translateX(-120%);
+  animation: sheen 7s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes sheen { 0%, 70% { transform: translateX(-120%); } 100% { transform: translateX(120%); } }
+@media (prefers-color-scheme: dark) { .habit.done::before { background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, .12) 50%, transparent 65%); } }
+.habit.done .check { box-shadow: 0 0 12px 2px color-mix(in srgb, var(--done) 55%, transparent); }
+/* little glowing flowers on the hills */
+.hill-flower { position: absolute; bottom: 0; width: 14px; height: 22px; z-index: 1; }
+.hill-flower svg { width: 100%; height: 100%; overflow: visible; }
+.hill-flower .stem { stroke: #9fd3b4; stroke-width: 1.6; fill: none; }
+.hill-flower .petal { fill: var(--fl, #ffc4dc); }
+.hill-flower .heart { fill: #fff3b0; }
+body[data-period="night"] .hill-flower .petal, body[data-period="dusk"] .hill-flower .petal { filter: drop-shadow(0 0 4px var(--fl)); animation: bloomglow 3.5s ease-in-out infinite; }
+@keyframes bloomglow { 50% { opacity: .6; } }
+.hill-flower { animation: sway 4s ease-in-out infinite; transform-origin: bottom center; }
+@keyframes sway { 50% { transform: rotate(5deg); } }
+@media (prefers-reduced-motion: reduce) {
+  body::before, .card, .habit.done::before, .hill-flower, .hill-flower .petal { animation: none !important; }
+}
 
 [hidden] { display: none !important; }

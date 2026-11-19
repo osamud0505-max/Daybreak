@@ -70,12 +70,28 @@
     <span class="zz">z</span><span class="zz z2">z</span>`);
 
   const hills = sky.querySelector(".hills");
+  // Tiny flowers that sway on the hills (and glow at night).
+  const FL = ["#ffc4dc", "#dcc8ff", "#bfe2ff", "#fff0b8", "#ffd2b8"];
+  const flowers = div("flowers");
+  [[8, 6], [17, 10], [31, 4], [46, 9], [63, 5], [74, 11], [88, 7], [95, 3]].forEach(([x, up], i) => {
+    const f = div("hill-flower", `<svg viewBox="0 0 14 22"><path class="stem" d="M7 22V9"/>${
+      [0, 72, 144, 216, 288].map((r) => `<ellipse class="petal" cx="7" cy="4.2" rx="2.4" ry="3" transform="rotate(${r} 7 7)"/>`).join("")
+    }<circle class="heart" cx="7" cy="7" r="1.8"/></svg>`);
+    f.style.left = `${x}%`;
+    f.style.bottom = `${up + 14}px`;
+    f.style.setProperty("--fl", FL[i % FL.length]);
+    f.style.animationDelay = `${-i * 0.7}s`;
+    const sc = 0.8 + (i % 3) * 0.15;
+    f.style.width = `${14 * sc}px`; f.style.height = `${22 * sc}px`;
+    flowers.append(f);
+  });
   sky.querySelectorAll(".stars, .cloud, .orb").forEach((n) => n.remove());
   sky.insertBefore(stars, hills);
   sky.insertBefore(shooting, hills);
   sky.insertBefore(clouds, hills);
   sky.insertBefore(sun, hills);
   sky.insertBefore(moon, hills);
+
 
   // A tap on the sun or moon makes it wiggle (and chime, if sounds are on).
   [sun, moon].forEach((c) => c.addEventListener("click", () => {
