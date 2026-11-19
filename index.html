@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Daily</title>
+  <meta name="description" content="A quiet daily discipline log.">
+  <meta name="theme-color" content="#e9efe9" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1b2421" media="(prefers-color-scheme: dark)">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Daily">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="sky" id="sky" aria-hidden="true">
+    <div class="orb" id="orb"></div>
+    <svg class="hills" viewBox="0 0 400 80" preserveAspectRatio="none">
+      <path class="hill-back" d="M0 50 C 80 20, 160 30, 230 45 S 360 30, 400 38 L400 80 L0 80 Z"/>
+      <path class="hill-front" d="M0 62 C 90 44, 170 58, 250 54 S 350 46, 400 58 L400 80 L0 80 Z"/>
+    </svg>
+  </div>
+
+  <main class="wrap">
+    <header class="top">
+      <p class="greeting" id="greeting">Good morning</p>
+      <h1 class="date" id="date"></h1>
+      <div class="progress" aria-live="polite">
+        <div class="bar"><span id="bar"></span></div>
+        <span class="count" id="count">0 / 0</span>
+      </div>
+    </header>
+
+    <section class="card intention" id="intention">
+      <p class="label">Today's one thing</p>
+      <form id="planForm" class="row-form">
+        <input id="planInput" type="text" maxlength="90" placeholder="If I do only one thing today…" autocomplete="off">
+        <button type="submit" class="btn">Set</button>
+      </form>
+      <button id="planText" class="plan-text" hidden></button>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>Today</h2>
+        <button class="link" id="editBtn" type="button">Edit</button>
+      </div>
+      <ul class="habits" id="habits"></ul>
+      <div class="editor" id="editor" hidden>
+        <ul id="editList"></ul>
+        <form id="addForm" class="row-form">
+          <input id="addInput" type="text" maxlength="40" placeholder="Add a habit" autocomplete="off">
+          <button class="btn ghost" type="submit">Add</button>
+        </form>
+        <p class="hint" id="editHint">Keep it short. A few habits you actually do beat a long list you feel bad about.</p>
+      </div>
+    </section>
+
+    <section class="card focus">
+      <p class="label">No-phone time <span id="focusTotal" class="soft"></span></p>
+      <div id="focusIdle" class="picks">
+        <button class="btn soft-btn" data-min="30" type="button">30 min</button>
+        <button class="btn soft-btn" data-min="60" type="button">60 min</button>
+        <button class="btn soft-btn" data-min="90" type="button">90 min</button>
+      </div>
+      <div id="focusRun" class="focus-run" hidden>
+        <div class="breath"><div class="breath-ring"></div><span id="timeLeft">30:00</span></div>
+        <p class="hint">Lock the screen. Put the phone in another room. It keeps counting while it's closed.</p>
+        <button class="link" id="stopBtn" type="button">I picked it up early</button>
+      </div>
+    </section>
+
+    <section class="card evening" id="evening">
+      <p class="label">Evening check-in</p>
+      <div id="eveningBody">
+        <label for="well">What went well?</label>
+        <textarea id="well" rows="2"></textarea>
+        <label for="fix">One thing to do better tomorrow</label>
+        <textarea id="fix" rows="2"></textarea>
+        <button class="btn" id="saveEvening" type="button">Save</button>
+        <span class="saved soft" id="savedNote" hidden>Saved</span>
+      </div>
+      <button class="link" id="eveningEarly" type="button" hidden>Opens at 5 PM. Open now</button>
+    </section>
+
+    <section>
+      <div class="section-head"><h2>Last 4 weeks</h2></div>
+      <div class="month" id="month" aria-label="Days by how many habits were done"></div>
+    </section>
+
+    <footer class="foot">
+      <p>Saved only on this phone. Tick it, then put the phone down.</p>
+      <button class="link" id="exportBtn" type="button">Back up my data</button>
+      <label class="link" for="importFile">Restore a backup</label>
+      <input id="importFile" type="file" accept="application/json" hidden>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
