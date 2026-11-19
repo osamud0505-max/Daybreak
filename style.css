@@ -1144,3 +1144,15 @@ section[data-tab="me"] > .section-head h2 { color: #fff; text-shadow: 0 0 10px r
 .shooter { background: linear-gradient(90deg, rgba(90, 150, 255, 0), rgba(110, 175, 255, .75) 55%, #e8f2ff) !important; box-shadow: 0 0 14px rgba(110, 170, 255, 1), 0 0 26px rgba(90, 140, 255, .6) !important; height: 2.5px !important; }
 .star { background: #fff; box-shadow: 0 0 6px 1px rgba(200, 215, 255, .9); }
 @media (prefers-reduced-motion: reduce) { .glint, .cloud-sea, .card::after { animation: none !important; } .glint { display: none; } }
+
+/* ---------- missing ingredients ---------- */
+#mealMissing { display: block; margin: 10px auto 0; }
+.miss-clear { display: none; }
+#missNote:not([hidden]) + .miss-clear { display: block; margin: 2px auto 0; font-size: .85rem; }
+#missNote { text-align: center; }
+#mealIngredients.picking { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.miss-pick { font: inherit; font-weight: 700; font-size: .9rem; padding: 8px 14px; border-radius: 99px; cursor: pointer; color: var(--ink);
+  background: var(--row-panel); border: 1px solid var(--frame-soft); box-shadow: 0 0 8px var(--glow-soft); }
+.miss-pick.on { color: #fff; background: var(--magic); border-color: rgba(255, 255, 255, .8); box-shadow: 0 0 12px rgba(196, 150, 255, .75); text-decoration: line-through; }
+#missFind { width: 100%; margin: 12px 0 4px; }
+#missFind:disabled { opacity: .5; }

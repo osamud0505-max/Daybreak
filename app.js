@@ -27,7 +27,9 @@
   let tasks = [];
   let recipes = { breakfast: [], lunch: [], dinner: [] };
   let workouts = null;
-  const tasksOn = (k) => (routine ? S.tasksFor(routine, k) : []);
+  // Period-only steps (like a short rest) appear only on days marked in the cycle tracker.
+  const onPeriod = (k) => !!(state.cycle && state.cycle.days && state.cycle.days[k]);
+  const tasksOn = (k) => (routine ? S.tasksFor(routine, k).filter((t) => !t.periodOnly || onPeriod(k)) : []);
   const loadTasks = () => { tasks = tasksOn(todayKey()); };
 
   // ---------- dates ----------
@@ -55,7 +57,7 @@
   const blockOf = (t) => { const m = t.min; return m < 660 ? "Morning" : m < 1020 ? "Day" : m < 1260 ? "Evening" : "Night"; };
 
   // Is this task on the schedule for that date? (Gym nights, home-stretch nights.)
-  const scheduledOn = (t, d) => !t.days || t.days.includes(d.getDay());
+  const scheduledOn = (t, d) => (!t.days || t.days.includes(d.getDay())) && (!t.periodOnly || onPeriod(keyOf(d)));
 
   // Streak counts scheduled days only, so a rest night doesn't break the gym streak.
   function streak(t) {
@@ -298,6 +300,7 @@
     $("nowSub").textContent = [
       late > 15 ? `Planned ${fmtRange(t)}. You're behind, that's okay. Start it now.` : `${fmtRange(t)}${t.dur ? `, about ${howLong(t.dur)}` : ""}.`,
       u ? `You usually take ${howLong(u)}.` : "",
+      t.note || "",
       others > 0 ? `${others} more ${others === 1 ? "step is" : "steps are"} waiting after this.` : "",
     ].filter(Boolean).join(" ");
     doneBtn.hidden = false;
@@ -308,7 +311,7 @@
     minor.hidden = false;
     $("nowAlready").hidden = !timed;
     $("nowAlready").onclick = () => toggle(t.id);
-    $("nowSkip").textContent = "Skip today";
+    $("nowSkip").textContent = t.periodOnly ? "I feel okay, skip it" : "Skip today";
     $("nowSkip").onclick = () => { const dd = day(tk); dd.skip = [...(dd.skip || []), t.id]; save(); renderAll(); };
     setLink(t);
     const after = pickAfter(t.id);
@@ -349,14 +352,30 @@
   // ---------- meals ----------
   const mealNow = () => { const m = nowMins(); return m < 630 ? "breakfast" : m < 930 ? "lunch" : "dinner"; };
   const hash = (s) => [...s].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
+  // "I don't have everything": ingredients you're missing today are left out of the suggestions.
+  const STOP = new Set("a an of the to some few handful handfuls cup cups tbsp tsp tablespoon tablespoons teaspoon teaspoons slice slices small large big medium pinch can cans tin tins g kg ml l piece pieces diced chopped sliced minced fresh cooked ripe whole half x".split(" "));
+  const STAPLE = new Set(["salt", "pepper", "black pepper", "water", "oil", "olive oil", "salt pepper"]);
+  const sing = (w) => (w.length > 4 && /oes$/.test(w) ? w.slice(0, -2) : w.length > 3 && /[^s]s$/.test(w) ? w.slice(0, -1) : w);
+  function keywords(line) {
+    return line.toLowerCase().replace(/\(.*?\)/g, "").split(/,| or | and | with |\//)
+      .map((p) => p.split(/\s+/).filter((w) => w && !STOP.has(w) && !/^[\d½¼¾.\-–]+(g|ml|kg)?$/.test(w)).map(sing).join(" ").trim())
+      .filter((k) => k.length >= 3 && !STAPLE.has(k));
+  }
+  const missingKey = () => `${todayKey()}-missing`;
+  const missingToday = () => state.meal[missingKey()] || [];
+  const fits = (r, miss) => { const all = r.ingredients.map((i) => keywords(i).join(" | ")).join(" | "); return !miss.some((m) => all.includes(m)); };
   function currentRecipe() {
     const meal = mealNow();
     const list = recipes[meal] || [];
     if (!list.length) return { meal, recipe: null };
     const k = `${todayKey()}-${meal}`;
-    const idx = (hash(k) + (state.meal[k] || 0)) % list.length;
-    return { meal, recipe: list[idx], key: k };
+    const miss = missingToday();
+    const ok = list.filter((r) => fits(r, miss));
+    const pool = ok.length ? ok : list;
+    const idx = (hash(k) + (state.meal[k] || 0)) % pool.length;
+    return { meal, recipe: pool[idx], key: k, nothingFits: !ok.length };
   }
+  let missingMode = false, picked = new Set();
   function renderMeal() {
     const { meal, recipe } = currentRecipe();
     $("meal").hidden = !recipe;
@@ -364,7 +383,23 @@
     $("mealLabel").textContent = { breakfast: "Breakfast", lunch: "Lunch", dinner: "Tonight's dinner" }[meal];
     $("mealTime").textContent = `· ${recipe.time}`;
     $("mealName").textContent = recipe.name;
-    $("mealIngredients").replaceChildren(...recipe.ingredients.map((i) => el("li", { textContent: i })));
+    $("mealIngredients").replaceChildren(...recipe.ingredients.map((i) => {
+      if (!missingMode) return el("li", { textContent: i });
+      const b = el("button", { type: "button", className: `miss-pick${picked.has(i) ? " on" : ""}`, textContent: i });
+      b.setAttribute("aria-pressed", String(picked.has(i)));
+      b.onclick = () => { picked.has(i) ? picked.delete(i) : picked.add(i); renderMeal(); };
+      return el("li", { className: "miss-li" }, b);
+    }));
+    $("mealIngredients").classList.toggle("picking", missingMode);
+    $("missHint").hidden = !missingMode;
+    $("missFind").hidden = !missingMode;
+    $("missFind").disabled = !picked.size;
+    $("mealMissing").textContent = missingMode ? "Never mind" : "I don't have everything";
+    const miss = missingToday();
+    $("missNote").hidden = !miss.length;
+    $("missNote").textContent = currentRecipe().nothingFits
+      ? "Nothing in the list skips everything you're missing. Here's the closest one; swap or leave out what you don't have."
+      : `Skipping recipes with: ${miss.join(", ")}.`;
     $("mealSteps").replaceChildren(...recipe.steps.map((s) => el("li", { textContent: s })));
     const made = isDone(MEAL_TASK[meal], todayKey());
     $("mealMade").textContent = made ? "Made it" : "I made it";
@@ -381,6 +416,22 @@
     state.meal[key] = (state.meal[key] || 0) + 1;
     save(); renderMeal();
   });
+  $("mealMissing").addEventListener("click", () => {
+    missingMode = !missingMode; picked = new Set();
+    if (missingMode) { $("mealBody").hidden = false; $("mealName").setAttribute("aria-expanded", "true"); }
+    renderMeal();
+  });
+  $("missFind").addEventListener("click", () => {
+    const add = [...picked].flatMap(keywords);
+    const before = currentRecipe().recipe;
+    state.meal[missingKey()] = [...new Set([...missingToday(), ...add])];
+    // If nothing changed (all were staples), still move on to another idea.
+    if (currentRecipe().recipe === before) { const { key } = currentRecipe(); state.meal[key] = (state.meal[key] || 0) + 1; }
+    missingMode = false; picked = new Set();
+    save(); renderMeal();
+    sparkle($("mealName"));
+  });
+  $("missClear").addEventListener("click", () => { delete state.meal[missingKey()]; save(); renderMeal(); });
   $("mealMade").addEventListener("click", () => {
     const id = MEAL_TASK[mealNow()];
     if (!isDone(id, todayKey())) { sparkle($("mealMade")); toggle(id); }
@@ -542,7 +593,7 @@
     const tk = todayKey();
     if (cyc().days[tk]) delete cyc().days[tk];
     else cyc().days[tk] = { flow: null, sym: [] };
-    save(); renderCycle(); renderMonth(); renderMove();
+    save(); loadTasks(); renderAll();
   });
   $("cycleEdit").addEventListener("click", () => {
     cycleEditing = !cycleEditing;

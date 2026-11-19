@@ -41,6 +41,18 @@
       "quiet": true
     },
     {
+      "id": "rest-period",
+      "anchor": "wake",
+      "offset": 19,
+      "dur": 20,
+      "periodOnly": true,
+      "quiet": true,
+      "name": "Lie down and rest",
+      "icon": "sleep",
+      "note": "Period day, so go easy. Lie down for up to 20 minutes, then carry on. Feeling fine? Skip it.",
+      "push": "Rest for a bit."
+    },
+    {
       "id": "bed",
       "name": "Make the bed",
       "push": "Make the bed. Once it's made, you can't crawl back in.",
