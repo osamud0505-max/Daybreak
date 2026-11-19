@@ -18,6 +18,8 @@
     try { localStorage.setItem(KEY, JSON.stringify(state)); } catch { /* storage unavailable */ }
   }
   let state = load();
+  // Music was tried and removed: clear any songs that were saved for it.
+  try { indexedDB.deleteDatabase("daybreak-music"); } catch { /* not available */ }
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
 
   const S = window.DaybreakSchedule;
