@@ -97,18 +97,17 @@
   setInterval(() => { if (enabled && unlocked && document.visibilityState === "visible" && cur && pick(slot()) !== name) play(); }, 60000);
 
   // Music on/off switch in the footer (Me tab), next to "Sounds on".
-  const btn = document.createElement("button");
-  btn.type = "button"; btn.className = "link"; btn.id = "musicBtn";
-  const label = () => (btn.textContent = enabled ? "Music on" : "Music off");
-  label();
-  btn.addEventListener("click", () => {
-    enabled = !enabled;
-    try { localStorage.setItem(KEY, enabled ? "on" : "off"); } catch { /* storage blocked */ }
+  const btn = document.getElementById("musicBtn");
+  if (btn) {
+    const label = () => btn.setAttribute("aria-checked", String(enabled));
     label();
-    if (enabled) { unlocked = true; play(); } else pause(800);
-  });
-  const sound = document.getElementById("soundBtn");
-  if (sound) sound.after(btn);
+    btn.addEventListener("click", () => {
+      enabled = !enabled;
+      try { localStorage.setItem(KEY, enabled ? "on" : "off"); } catch { /* storage blocked */ }
+      label();
+      if (enabled) { unlocked = true; play(); } else pause(800);
+    });
+  }
 
   window.DaybreakAmbient = { slot, tracks: TRACKS, play, pause };
 })();

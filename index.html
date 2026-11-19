@@ -17,13 +17,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=31">
+  <link rel="stylesheet" href="style.css?v=32">
 </head>
 <body>
   <div class="sky" id="sky" aria-hidden="true"></div>
 
   <main class="wrap">
     <header class="top">
+      <button class="gear-btn" id="settingsBtn" type="button" aria-label="Settings" aria-haspopup="dialog" aria-controls="settings"><span data-icon="gear"></span></button>
       <p class="greeting" id="greeting">Good morning</p>
       <h1 class="date" id="date"></h1>
       <div class="progress" aria-live="polite">
@@ -160,26 +161,60 @@
       <div class="month" id="month" aria-label="Days by how much of the routine was done"></div>
     </section>
 
-    <details class="card setup" data-tab="me">
-      <summary class="label"><span class="emo" data-icon="bell"></span>Reminders on your phone</summary>
-      <ol class="setup-steps">
-        <li>Install the free <strong>ntfy</strong> app from the Play Store.</li>
-        <li>Open it, tap <strong>+</strong>, and paste this topic:
-          <span class="topic"><code id="topic">daybreak-6fbaba0405b956ff</code><button class="link" id="copyTopic" type="button">Copy</button></span>
-        </li>
-        <li>Tap <strong>Subscribe</strong>. Reminders arrive at each time in your routine.</li>
-      </ol>
-      <p class="hint">Keep this topic private. Anyone who has it can see your reminders.</p>
-    </details>
-
     <footer class="foot" data-tab="me">
-      <p>Saved only on this phone. Tick it, then put the phone down.</p>
-      <button class="link sound-btn" id="soundBtn" type="button">Sounds on</button>
-      <button class="link" id="exportBtn" type="button">Back up my data</button>
-      <label class="link" for="importFile">Restore a backup</label>
-      <input id="importFile" type="file" accept="application/json" hidden>
+      <p>Tick it, then put the phone down.</p>
     </footer>
   </main>
+
+
+  <div class="settings" id="settings" role="dialog" aria-modal="true" aria-labelledby="settingsTitle" hidden>
+    <div class="settings-veil" data-close></div>
+    <div class="settings-sheet">
+      <div class="settings-head">
+        <h2 id="settingsTitle">Settings</h2>
+        <button class="gear-btn close-btn" type="button" aria-label="Close settings" data-close><span data-icon="close"></span></button>
+      </div>
+
+      <p class="set-label">Sound</p>
+      <div class="set-group">
+        <div class="set-row">
+          <span class="set-text"><strong>Background music</strong><small>A soft song for each time of day</small></span>
+          <button class="switch" id="musicBtn" type="button" role="switch" aria-checked="true" aria-label="Background music"></button>
+        </div>
+        <div class="set-row">
+          <span class="set-text"><strong>Tap sounds</strong><small>Little chimes when you tick things off</small></span>
+          <button class="switch" id="soundBtn" type="button" role="switch" aria-checked="true" aria-label="Tap sounds"></button>
+        </div>
+      </div>
+
+      <p class="set-label">Reminders</p>
+      <div class="set-group">
+        <details class="set-row set-details">
+          <summary><span class="set-text"><strong>Get reminders on your phone</strong><small>Set up the free ntfy app</small></span></summary>
+          <ol class="setup-steps">
+            <li>Install the free <strong>ntfy</strong> app from the Play Store.</li>
+            <li>Open it, tap <strong>+</strong>, and paste this topic:
+              <span class="topic"><code id="topic">daybreak-6fbaba0405b956ff</code><button class="link" id="copyTopic" type="button">Copy</button></span>
+            </li>
+            <li>Tap <strong>Subscribe</strong>. Reminders arrive at each time in your routine.</li>
+          </ol>
+          <p class="hint">Keep this topic private. Anyone who has it can see your reminders.</p>
+        </details>
+      </div>
+
+      <p class="set-label">Your data</p>
+      <div class="set-group">
+        <button class="set-row set-action" id="exportBtn" type="button">
+          <span class="set-text"><strong>Back up my data</strong><small>Saves a file you can keep somewhere safe</small></span>
+        </button>
+        <label class="set-row set-action" for="importFile">
+          <span class="set-text"><strong>Restore a backup</strong><small id="importNote">Pick a Daybreak backup file</small></span>
+        </label>
+        <input id="importFile" type="file" accept="application/json" hidden>
+      </div>
+      <p class="set-foot">Everything is saved only on this phone. Nothing is sent anywhere except your reminder times.</p>
+    </div>
+  </div>
 
   <nav class="tabbar" aria-label="Sections">
     <button type="button" data-go="today"><span data-icon="sun"></span>Today</button>
@@ -188,12 +223,12 @@
     <button type="button" data-go="me"><span data-icon="heart"></span>Me</button>
   </nav>
 
-  <script src="icons.js?v=31"></script>
-  <script src="sound.js?v=31"></script>
-  <script src="schedule.js?v=31"></script>
-  <script src="app.js?v=31"></script>
-  <script src="sky.js?v=31"></script>
-  <script src="fairy.js?v=31"></script>
-  <script src="ambient.js?v=31"></script>
+  <script src="icons.js?v=32"></script>
+  <script src="sound.js?v=32"></script>
+  <script src="schedule.js?v=32"></script>
+  <script src="app.js?v=32"></script>
+  <script src="sky.js?v=32"></script>
+  <script src="fairy.js?v=32"></script>
+  <script src="ambient.js?v=32"></script>
 </body>
 </html>

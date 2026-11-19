@@ -766,8 +766,33 @@
       if (typeof data.log !== "object") throw new Error("bad file");
       state = { ...blank(), ...data };
       save(); renderAll();
-    } catch { $("importFile").value = ""; }
+      $("importNote").textContent = "Restored. Your data is back.";
+    } catch { $("importNote").textContent = "That file didn't work. Pick a Daybreak backup file."; }
+    $("importFile").value = "";
   });
+
+  // ---------- settings ----------
+  const settings = $("settings");
+  function openSettings() {
+    if (!settings.hidden) return;
+    settings.hidden = false;
+    document.body.classList.add("sheet-open");
+    requestAnimationFrame(() => settings.classList.add("open"));
+    try { history.pushState({ settings: true }, ""); } catch { /* ignore */ }
+    settings.querySelector(".close-btn").focus({ preventScroll: true });
+  }
+  function closeSettings(fromBack) {
+    if (settings.hidden) return;
+    settings.classList.remove("open");
+    document.body.classList.remove("sheet-open");
+    setTimeout(() => { settings.hidden = true; }, 260);
+    if (!fromBack && history.state && history.state.settings) history.back();
+    $("settingsBtn").focus({ preventScroll: true });
+  }
+  $("settingsBtn").addEventListener("click", openSettings);
+  settings.addEventListener("click", (e) => { if (e.target.closest("[data-close]")) closeSettings(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeSettings(); });
+  window.addEventListener("popstate", () => closeSettings(true));
 
   // ---------- go ----------
   function renderAll() {
@@ -789,7 +814,7 @@
     }
     if (!b.matches("#nowDone, #moveDone, #mealMade, #alSwitch, #soundBtn, [data-min]")) sound("tap");
   });
-  const soundLabel = () => ($("soundBtn").textContent = window.DaybreakSound && window.DaybreakSound.enabled ? "Sounds on" : "Sounds off");
+  const soundLabel = () => $("soundBtn").setAttribute("aria-checked", String(!!(window.DaybreakSound && window.DaybreakSound.enabled)));
   $("soundBtn").addEventListener("click", () => { window.DaybreakSound.set(!window.DaybreakSound.enabled); soundLabel(); });
   soundLabel();
 
