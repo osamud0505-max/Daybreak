@@ -83,8 +83,9 @@ jobs:
       - name: Check the helper answers
         if: steps.key.outputs.ready == 'yes'
         run: |
-          sleep 5
-          curl -sS --fail-with-body "$URL/" && echo
+          # A new workers.dev address can take a few minutes to get its certificate.
+          for i in $(seq 1 40); do curl -s --fail "$URL/" && break; sleep 15; done
+          echo
           curl -sS --fail-with-body "$URL/vapid" | grep -q '"key":"B' && echo "VAPID key OK"
           code=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$URL/subscribe" -H "Content-Type: application/json" -d '{"subscription":{"endpoint":"http://bad","keys":{"p256dh":"x","auth":"y"}}}')
           [ "$code" = 400 ] && echo "Rejects bad subscriptions OK"
