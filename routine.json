@@ -66,9 +66,18 @@
       "dur": 20
     },
     {
-      "id": "breakfast",
+      "id": "shower-am",
       "anchor": "wake",
       "offset": 50,
+      "dur": 12,
+      "name": "Morning shower (body)",
+      "push": "Quick shower, body only. Hair is tonight. Warm, then 30 seconds cool to wake up.",
+      "icon": "drop"
+    },
+    {
+      "id": "breakfast",
+      "anchor": "wake",
+      "offset": 62,
       "name": "Real breakfast",
       "push": "Breakfast. Daybreak has a recipe ready for you. Aligners out, then brush and put them back in within 30 minutes.",
       "icon": "bowl",
@@ -77,7 +86,7 @@
     {
       "id": "vitamins",
       "anchor": "wake",
-      "offset": 75,
+      "offset": 87,
       "name": "Vitamin D + C",
       "push": "Vitamin D and C now, while breakfast is still in you. Vitamin D absorbs best with food.",
       "icon": "pill",
@@ -86,7 +95,7 @@
     {
       "id": "plan",
       "anchor": "wake",
-      "offset": 78,
+      "offset": 90,
       "name": "Set today's one thing",
       "push": "What's the one thing that makes today a win? Write it down.",
       "icon": "star",
@@ -95,7 +104,7 @@
     {
       "id": "school",
       "anchor": "wake",
-      "offset": 90,
+      "offset": 100,
       "name": "School work",
       "push": "School block. Phone in another room, start with the smallest task.",
       "icon": "book",
@@ -195,12 +204,11 @@
     },
     {
       "id": "room",
-      "anchor": "lightsOut",
-      "offset": -50,
-      "name": "Shower + room reset",
-      "push": "Shower, then a 10-minute room reset. Clothes, dishes, desk.",
-      "icon": "drop",
-      "dur": 25
+      "name": "10-minute room reset",
+      "push": "Room reset: 10 minutes. Clothes away, surfaces clear, bin out. Set a timer and stop when it rings.",
+      "icon": "sparkle",
+      "dur": 10,
+      "time": "20:20"
     },
     {
       "id": "teeth-pm",
@@ -227,6 +235,15 @@
       "push": "Evening check-in, then pick tomorrow's one thing.",
       "icon": "thought",
       "dur": 10
+    },
+    {
+      "id": "shower-pm",
+      "anchor": "lightsOut",
+      "offset": -55,
+      "dur": 25,
+      "name": "Night shower (body + hair)",
+      "push": "Shower: body and hair tonight. Dry your hair so you're not going to bed wet.",
+      "icon": "drop"
     },
     {
       "id": "aligner-change",
