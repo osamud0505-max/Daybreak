@@ -1305,3 +1305,28 @@ body.sheet-open { overflow: hidden; }
 .saved-item ul, .saved-item ol { margin: 6px 0 4px; padding-left: 20px; font-size: .93rem; }
 .saved-item li { margin: 4px 0; }
 .saved-actions { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+
+/* =================== LAST 4 WEEKS =================== */
+.month-key { margin: -4px 4px 10px; }
+body.twilight .month-key { color: rgba(255, 255, 255, .85); }
+.month { background: var(--panel); border: 1.5px solid var(--frame); box-shadow: 0 0 22px var(--glow); }
+.month .d {
+  font: inherit; font-weight: 700; font-size: .8rem; padding: 0; cursor: pointer; border: 0;
+  color: var(--ink-soft); background: color-mix(in srgb, var(--frame-soft) 55%, transparent);
+  transition: transform .15s ease;
+}
+.month .d:active { transform: scale(.92); }
+.month .d.lit {
+  color: var(--ink);
+  background: color-mix(in srgb, #e2ccff var(--lit), color-mix(in srgb, var(--frame-soft) 55%, transparent));
+  box-shadow: 0 0 10px rgba(200, 160, 255, .45);
+}
+.month .d.full { background: linear-gradient(135deg, #c9a8ff, #f6b3dc); color: #5b3fa8; box-shadow: 0 0 14px rgba(240, 170, 230, .7); }
+.month .d.full svg { width: 60%; height: 60%; color: #5b3fa8; }
+.month .d.today { outline: 2px solid var(--frame); outline-offset: 2px; }
+.month .d.picked { outline: 2.5px solid #fff; outline-offset: 2px; }
+.day-detail { margin-top: 12px; }
+.day-line { margin: 2px 0 6px; font-family: var(--round); font-weight: 600; font-size: 1.05rem; }
+.day-list { margin: 4px 0 8px; padding-left: 20px; font-size: .93rem; }
+.day-list li { margin: 3px 0; }
+.day-list.left { color: var(--ink-soft); }

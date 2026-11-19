@@ -786,21 +786,55 @@
       const total = dayTasks.length || 1;
       const n = dayTasks.filter((t) => isDone(t.id, k)).length;
       const pct = Math.round((n / total) * 85);
-      const cell = el("div", { className: `d${k === tk ? " today" : ""}`, textContent: d.getDate() });
+      const cell = el("button", { type: "button", className: `d${k === tk ? " today" : ""}${k === pickedDay ? " picked" : ""}`, textContent: d.getDate() });
+      cell.setAttribute("aria-label", `${d.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}: ${n} of ${total} done`);
       if (n) {
-        cell.style.background = `color-mix(in srgb, var(--done) ${pct}%, var(--surface))`;
-        cell.style.color = "var(--ink)";
-        if (n === total) cell.innerHTML = I("flower");
+        cell.classList.add("lit");
+        cell.style.setProperty("--lit", `${Math.max(18, pct)}%`);
+        if (n === total) { cell.classList.add("full"); cell.innerHTML = I("flower"); }
       }
       cell.title = `${k}: ${n} of ${total}`;
       if (isPeriod(k)) cell.classList.add("period");
       else if (predicted.has(k)) cell.classList.add("predicted");
-      if (cycleEditing) cell.addEventListener("click", () => {
-        if (isPeriod(k)) delete cyc().days[k]; else cyc().days[k] = { flow: null, sym: [] };
-        save(); renderMonth(); renderCycle();
+      cell.addEventListener("click", () => {
+        if (cycleEditing) {
+          if (isPeriod(k)) delete cyc().days[k]; else cyc().days[k] = { flow: null, sym: [] };
+          save(); renderMonth(); renderCycle();
+          return;
+        }
+        pickedDay = pickedDay === k ? null : k;
+        renderMonth();
       });
       m.append(cell);
     }
+    renderDayDetail();
+  }
+  // Tap a day in "Last 4 weeks" to see what you did.
+  let pickedDay = null;
+  function renderDayDetail() {
+    const box = $("dayDetail");
+    if (!pickedDay || cycleEditing) { box.hidden = true; return; }
+    const k = pickedDay;
+    const [y, mo, da] = k.split("-").map(Number);
+    const date = new Date(y, mo - 1, da);
+    const dayTasks = tasksOn(k);
+    const done = dayTasks.filter((t) => isDone(t.id, k));
+    const left = dayTasks.filter((t) => !isDone(t.id, k));
+    const isToday = k === todayKey();
+    const title = isToday ? "Today" : date.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
+    const line = !done.length ? (isToday ? "Nothing ticked yet. One small thing is enough to start." : "Nothing ticked this day. That's okay; never miss twice.")
+      : done.length === dayTasks.length ? "You did all of it." : `${done.length} of ${dayTasks.length} done.`;
+    const close = el("button", { type: "button", className: "link", textContent: "Close" });
+    close.onclick = () => { pickedDay = null; renderMonth(); };
+    const list = (items, cls) => el("ul", { className: `day-list ${cls}` }, ...items.map((t) => el("li", { textContent: t.name })));
+    box.replaceChildren(
+      el("p", { className: "label", textContent: title }),
+      el("p", { className: "day-line", textContent: line }),
+      ...(isPeriod(k) ? [el("p", { className: "hint", textContent: "Period day." })] : []),
+      ...(done.length ? [el("p", { className: "meal-h", textContent: "Done" }), list(done, "done")] : []),
+      ...(left.length && done.length ? [el("p", { className: "meal-h", textContent: isToday ? "Still to do" : "Not ticked" }), list(left, "left")] : []),
+      close);
+    box.hidden = false;
   }
 
   // ---------- reminders setup ----------
