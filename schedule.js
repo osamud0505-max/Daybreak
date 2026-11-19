@@ -68,5 +68,27 @@
       .sort((a, b) => a.min - b.min);
   }
 
-  root.DaybreakSchedule = { sleepFor, tasksFor, alignerFor, toMin, toHHMM };
+  // The reminders to send on a date: [{ min (minutes after that midnight, may pass 1440), title, body, id }].
+  // Quiet steps are walked through in the app, never pushed (period steps are always quiet).
+  function pushesFor(routine, dateKey) {
+    const [y, m, d] = dateKey.split("-").map(Number);
+    const tomorrowKey = new Date(Date.UTC(y, m - 1, d + 1)).toISOString().slice(0, 10);
+    const len = (n) => (n >= 60 ? `${Math.floor(n / 60)} h${n % 60 ? ` ${n % 60} min` : ""}` : `${n} min`);
+    return tasksFor(routine, dateKey)
+      .filter((t) => t.push && !t.quiet)
+      .map((t) => {
+        let body = t.push;
+        // At lights out, say when to set tomorrow's alarm if the wake time moves.
+        if (t.anchor === "lightsOut" && t.offset === 0) {
+          const wakeT = sleepFor(routine, tomorrowKey).wake, wakeN = sleepFor(routine, dateKey).wake;
+          if (wakeT !== wakeN) {
+            const h = Math.floor(wakeT / 60), mm = String(wakeT % 60).padStart(2, "0");
+            body += ` Tomorrow you wake at ${((h + 11) % 12) + 1}:${mm} ${h < 12 ? "AM" : "PM"}, so move your alarm.`;
+          }
+        }
+        return { id: t.id, min: t.min + (t.pushDelay || 0), title: t.dur ? `${t.name} · ${len(t.dur)}` : t.name, body };
+      });
+  }
+
+  root.DaybreakSchedule = { sleepFor, tasksFor, alignerFor, pushesFor, toMin, toHHMM };
 })(typeof globalThis !== "undefined" ? globalThis : this);

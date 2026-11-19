@@ -37,38 +37,26 @@ const today = Object.fromEntries(
 
 const dateKey = `${today.year}-${today.month}-${today.day}`;
 let sent = 0;
-for (const t of globalThis.DaybreakSchedule.tasksFor(routine, dateKey)) {
-  if (!t.push || t.quiet) continue; // quiet steps are walked through in the app, not pushed
-  const at = zoned(+today.year, +today.month, +today.day, Math.floor(t.min / 60), t.min % 60) + (t.pushDelay || 0) * 60000;
+for (const t of globalThis.DaybreakSchedule.pushesFor(routine, dateKey)) {
+  const at = zoned(+today.year, +today.month, +today.day, Math.floor(t.min / 60), t.min % 60);
   if (at < now + 60_000) continue; // already passed
-  let body = t.push;
-  // At lights out, say when to set tomorrow's alarm if the wake time moves.
-  if (t.anchor === "lightsOut" && t.offset === 0) {
-    const tm = new Date(Date.UTC(+today.year, +today.month - 1, +today.day + 1));
-    const tomorrowKey = tm.toISOString().slice(0, 10);
-    const S = globalThis.DaybreakSchedule;
-    const wakeT = S.sleepFor(routine, tomorrowKey).wake, wakeN = S.sleepFor(routine, dateKey).wake;
-    if (wakeT !== wakeN) {
-      const h = Math.floor(wakeT / 60), mm = String(wakeT % 60).padStart(2, "0");
-      body += ` Tomorrow you wake at ${((h + 11) % 12) + 1}:${mm} ${h < 12 ? "AM" : "PM"}, so move your alarm.`;
-    }
-  }
+  const body = t.body;
   const headers = {
-    Title: t.dur ? `${t.name} · ${t.dur >= 60 ? `${Math.floor(t.dur / 60)} h${t.dur % 60 ? ` ${t.dur % 60} min` : ""}` : `${t.dur} min`}` : t.name,
+    Title: t.title,
     At: String(Math.floor(at / 1000)),
     Click: appUrl,
     // Daybreak's own icon on every reminder (no emoji tags).
     Icon: new URL("icons/icon-192.png", appUrl.endsWith("/") ? appUrl : appUrl + "/").href,
-    Priority: ["max", "high"].includes(t.priority) ? t.priority : "default",
+    Priority: "default",
   };
   if (dryRun) {
-    console.log(`[dry run] ${new Date(at).toLocaleString("en-CA", { timeZone: tz })}  ${t.name}: ${body}`);
+    console.log(`[dry run] ${new Date(at).toLocaleString("en-CA", { timeZone: tz })}  ${t.title}: ${body}`);
     sent++;
     continue;
   }
   const res = await fetch(`https://ntfy.sh/${encodeURIComponent(topic)}`, { method: "POST", headers, body });
-  if (!res.ok) throw new Error(`ntfy refused "${t.name}": ${res.status} ${await res.text()}`);
-  console.log(`Scheduled ${t.time} ${t.name}`);
+  if (!res.ok) throw new Error(`ntfy refused "${t.title}": ${res.status} ${await res.text()}`);
+  console.log(`Scheduled ${globalThis.DaybreakSchedule.toHHMM(t.min)} ${t.title}`);
   sent++;
 }
 console.log(`${sent} reminders scheduled for ${today.year}-${today.month}-${today.day} (${tz}).`);

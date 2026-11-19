@@ -1,0 +1,13 @@
+# Daybreak notification helper. Deployed by .github/workflows/notify-worker.yml
+name = "daybreak-notify"
+main = "index.js"
+compatibility_date = "2026-11-01"
+workers_dev = true
+
+[triggers]
+crons = ["* * * * *"]
+
+# The workflow fills in the id of the KV store it creates.
+[[kv_namespaces]]
+binding = "DAYBREAK"
+id = "__KV_ID__"

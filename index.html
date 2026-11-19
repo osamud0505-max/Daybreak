@@ -17,7 +17,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=33">
+  <link rel="stylesheet" href="style.css?v=34">
 </head>
 <body>
   <div class="sky" id="sky" aria-hidden="true"></div>
@@ -194,8 +194,12 @@
 
       <p class="set-label">Reminders</p>
       <div class="set-group">
+        <div class="set-row">
+          <span class="set-text"><strong>Daybreak notifications</strong><small id="notifyNote">Reminders straight from Daybreak, no other app needed</small></span>
+          <button class="switch" id="notifyBtn" type="button" role="switch" aria-checked="false" aria-label="Daybreak notifications"></button>
+        </div>
         <details class="set-row set-details">
-          <summary><span class="set-text"><strong>Get reminders on your phone</strong><small>Set up the free ntfy app</small></span></summary>
+          <summary><span class="set-text"><strong>Reminders through ntfy</strong><small>The old way, until Daybreak's own are on</small></span></summary>
           <ol class="setup-steps">
             <li>Install the free <strong>ntfy</strong> app from the Play Store.</li>
             <li>Open it, tap <strong>+</strong>, and paste this topic:
@@ -228,12 +232,13 @@
     <button type="button" data-go="me"><span data-icon="heart"></span>Me</button>
   </nav>
 
-  <script src="icons.js?v=33"></script>
-  <script src="sound.js?v=33"></script>
-  <script src="schedule.js?v=33"></script>
-  <script src="app.js?v=33"></script>
-  <script src="sky.js?v=33"></script>
-  <script src="fairy.js?v=33"></script>
-  <script src="ambient.js?v=33"></script>
+  <script src="icons.js?v=34"></script>
+  <script src="sound.js?v=34"></script>
+  <script src="schedule.js?v=34"></script>
+  <script src="app.js?v=34"></script>
+  <script src="sky.js?v=34"></script>
+  <script src="fairy.js?v=34"></script>
+  <script src="ambient.js?v=34"></script>
+  <script src="notify.js?v=34"></script>
 </body>
 </html>
