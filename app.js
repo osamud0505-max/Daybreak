@@ -7,7 +7,7 @@
   const MEAL_TASK = { breakfast: "breakfast", lunch: "lunch", dinner: "dinner" };
 
   // ---------- storage ----------
-  const blank = () => ({ log: {}, timer: null, firstDay: null, meal: {}, cycle: { days: {} } });
+  const blank = () => ({ log: {}, timer: null, firstDay: null, meal: {}, cycle: { days: {} }, saved: [] });
   function load() {
     try {
       const raw = localStorage.getItem(KEY);
@@ -365,11 +365,18 @@
   const missingKey = () => `${todayKey()}-missing`;
   const missingToday = () => state.meal[missingKey()] || [];
   const fits = (r, miss) => { const all = r.ingredients.map((i) => keywords(i).join(" | ")).join(" | "); return !miss.some((m) => all.includes(m)); };
+  // Saved recipes are kept by name, so they survive recipe list changes.
+  const allRecipes = () => Object.entries(recipes).flatMap(([meal, list]) => (list || []).map((r) => ({ meal, r })));
+  const findRecipe = (name) => allRecipes().find((x) => x.r.name === name);
+  const savedList = () => (Array.isArray(state.saved) ? state.saved : (state.saved = []));
+  const isSaved = (name) => savedList().includes(name);
   function currentRecipe() {
     const meal = mealNow();
     const list = recipes[meal] || [];
     if (!list.length) return { meal, recipe: null };
     const k = `${todayKey()}-${meal}`;
+    const pick = state.meal[`${k}-pick`] && findRecipe(state.meal[`${k}-pick`]);
+    if (pick) return { meal, recipe: pick.r, key: k, picked: true };
     const miss = missingToday();
     const ok = list.filter((r) => fits(r, miss));
     const pool = ok.length ? ok : list;
@@ -384,6 +391,11 @@
     $("mealLabel").textContent = { breakfast: "Breakfast", lunch: "Lunch", dinner: "Tonight's dinner" }[meal];
     $("mealTime").textContent = `· ${recipe.time}`;
     $("mealName").textContent = recipe.name;
+    const fav = isSaved(recipe.name);
+    $("mealSave").setAttribute("aria-pressed", String(fav));
+    $("mealSave").setAttribute("aria-label", fav ? "Saved. Tap to remove from saved recipes" : "Save this recipe");
+    $("mealSaveText").textContent = fav ? "Saved" : "Save";
+    renderSaved();
     $("mealIngredients").replaceChildren(...recipe.ingredients.map((i) => {
       if (!missingMode) return el("li", { textContent: i });
       const b = el("button", { type: "button", className: `miss-pick${picked.has(i) ? " on" : ""}`, textContent: i });
@@ -411,9 +423,54 @@
     $("mealBody").hidden = !open;
     $("mealName").setAttribute("aria-expanded", String(open));
   });
+  function toggleSaved(name) {
+    const list = savedList();
+    state.saved = list.includes(name) ? list.filter((n) => n !== name) : [...list, name];
+    save(); renderMeal();
+  }
+  $("mealSave").addEventListener("click", () => {
+    const { recipe } = currentRecipe();
+    if (!recipe) return;
+    if (!isSaved(recipe.name)) sparkle($("mealSave"));
+    toggleSaved(recipe.name);
+  });
+  const MEAL_WORD = { breakfast: "breakfast", lunch: "lunch", dinner: "dinner" };
+  function renderSaved() {
+    const box = $("savedList");
+    const items = savedList().map(findRecipe).filter(Boolean);
+    $("savedEmpty").hidden = items.length > 0;
+    const open = new Set([...box.querySelectorAll("details[open]")].map((d) => d.dataset.name));
+    const now = mealNow();
+    box.replaceChildren(...items.map(({ meal, r }) => {
+      const d = el("details", { className: "saved-item" });
+      d.dataset.name = r.name;
+      if (open.has(r.name)) d.open = true;
+      const sum = el("summary", {},
+        el("span", { className: "saved-name", textContent: r.name }),
+        el("span", { className: "saved-meta", textContent: `${MEAL_WORD[meal][0].toUpperCase()}${MEAL_WORD[meal].slice(1)} · ${r.time}` }));
+      const use = el("button", { type: "button", className: "btn", textContent: `Make it for ${MEAL_WORD[now]}` });
+      use.onclick = () => {
+        state.meal[`${todayKey()}-${now}-pick`] = r.name;
+        save(); renderMeal();
+        $("mealBody").hidden = false; $("mealName").setAttribute("aria-expanded", "true");
+        $("meal").scrollIntoView({ behavior: "smooth", block: "start" });
+        sparkle($("mealName"));
+      };
+      const rm = el("button", { type: "button", className: "link", textContent: "Remove from saved" });
+      rm.onclick = () => toggleSaved(r.name);
+      d.append(sum,
+        el("p", { className: "meal-h", textContent: "You need" }),
+        el("ul", {}, ...r.ingredients.map((i) => el("li", { textContent: i }))),
+        el("p", { className: "meal-h", textContent: "Steps" }),
+        el("ol", {}, ...r.steps.map((s) => el("li", { textContent: s }))),
+        el("div", { className: "saved-actions" }, use, rm));
+      return d;
+    }));
+  }
   $("mealAnother").addEventListener("click", () => {
     const { key } = currentRecipe();
     if (!key) return;
+    delete state.meal[`${key}-pick`];
     state.meal[key] = (state.meal[key] || 0) + 1;
     save(); renderMeal();
   });

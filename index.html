@@ -17,7 +17,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=38">
+  <link rel="stylesheet" href="style.css?v=39">
 </head>
 <body>
   <div class="sky" id="sky" aria-hidden="true"></div>
@@ -78,6 +78,7 @@
     <p class="tab-intro" data-tab="meals">One healthy idea for the meal that's coming up. Tap the name for ingredients and steps.</p>
     <section class="card meal" id="meal" data-tab="meals">
       <p class="label"><span class="emo" data-icon="pan"></span><span id="mealLabel">Tonight's dinner</span> <span class="soft" id="mealTime"></span></p>
+      <button class="meal-save" id="mealSave" type="button" aria-pressed="false" aria-label="Save this recipe"><span data-icon="heart"></span><span id="mealSaveText">Save</span></button>
       <button class="meal-name" id="mealName" type="button" aria-expanded="false"></button>
       <p class="hint al-meal" id="alMeal" hidden>Aligners out first. Brush, then back in within 30 minutes.</p>
       <div class="meal-body" id="mealBody" hidden>
@@ -95,6 +96,12 @@
       <button class="link" id="mealMissing" type="button">I don't have everything</button>
       <p class="hint" id="missNote" hidden></p>
       <button class="link miss-clear" id="missClear" type="button">Reset</button>
+    </section>
+
+    <section class="card saved-recipes" id="saved" data-tab="meals">
+      <p class="label"><span class="emo" data-icon="heart"></span>Saved recipes</p>
+      <p class="hint" id="savedEmpty">Tap Save on a recipe you love and it will wait for you here.</p>
+      <div id="savedList"></div>
     </section>
 
     <p class="tab-intro" data-tab="move">Today's movement. Tap the name to see each step.</p>
@@ -232,13 +239,13 @@
     <button type="button" data-go="me"><span data-icon="heart"></span>Me</button>
   </nav>
 
-  <script src="icons.js?v=38"></script>
-  <script src="sound.js?v=38"></script>
-  <script src="schedule.js?v=38"></script>
-  <script src="app.js?v=38"></script>
-  <script src="sky.js?v=38"></script>
-  <script src="fairy.js?v=38"></script>
-  <script src="ambient.js?v=38"></script>
-  <script src="notify.js?v=38"></script>
+  <script src="icons.js?v=39"></script>
+  <script src="sound.js?v=39"></script>
+  <script src="schedule.js?v=39"></script>
+  <script src="app.js?v=39"></script>
+  <script src="sky.js?v=39"></script>
+  <script src="fairy.js?v=39"></script>
+  <script src="ambient.js?v=39"></script>
+  <script src="notify.js?v=39"></script>
 </body>
 </html>

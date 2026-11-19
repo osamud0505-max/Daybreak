@@ -1277,3 +1277,31 @@ body.sheet-open { overflow: hidden; }
   background: #fff; border: 2px solid #c9b2ff; box-shadow: 0 0 10px var(--glow), 0 1px 4px rgba(60, 30, 120, .3);
 }
 .vol::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 2px solid #c9b2ff; box-shadow: 0 0 10px var(--glow); }
+
+/* =================== SAVED RECIPES =================== */
+#meal { position: relative; }
+#saved { --tint: var(--pink, var(--peach)); --tint-deep: var(--pink-deep, var(--peach-deep)); }
+.meal-save {
+  position: absolute; top: 14px; right: 14px; z-index: 2;
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px 6px 9px; cursor: pointer;
+  font: inherit; font-family: var(--round); font-weight: 700; font-size: .82rem; color: var(--label);
+  border-radius: 99px; border: 1.5px solid var(--frame-soft); background: var(--row-panel);
+  transition: transform .2s ease, background .3s ease;
+}
+.meal-save svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; transition: fill .25s ease; }
+.meal-save:active { transform: scale(.94); }
+.meal-save[aria-pressed="true"] { color: #fff; background: var(--magic); border-color: transparent; box-shadow: 0 0 12px var(--glow); }
+.meal-save[aria-pressed="true"] svg { fill: #fff; stroke: #fff; }
+#meal .label { padding-right: 96px; }
+
+.saved-item {
+  margin-top: 10px; border-radius: 18px; padding: 12px 14px;
+  background: var(--row-panel); border: 1px solid var(--frame-soft);
+}
+.saved-item summary { list-style: none; cursor: pointer; display: flex; flex-direction: column; gap: 2px; }
+.saved-item summary::-webkit-details-marker { display: none; }
+.saved-name { font-family: var(--round); font-weight: 600; font-size: 1.02rem; }
+.saved-meta { color: var(--ink-soft); font-size: .82rem; }
+.saved-item ul, .saved-item ol { margin: 6px 0 4px; padding-left: 20px; font-size: .93rem; }
+.saved-item li { margin: 4px 0; }
+.saved-actions { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
