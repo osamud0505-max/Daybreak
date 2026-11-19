@@ -229,7 +229,11 @@
     const link = $("nowLink");
     const act = d.active && tasks.find((t) => t.id === d.active.id);
     if (d.active && !act) { delete d.active; save(); }
+    const music = $("nowMusic");
     const setLink = (t) => {
+      const M = window.DaybreakMusic;
+      music.hidden = !(M && M.KIND[t.id]);
+      if (!music.hidden) music.onclick = () => M.open(t.id);
       const l = LINKS[t.id];
       link.hidden = !l;
       if (l) { link.textContent = `${l[1]} ›`; link.onclick = () => goTab(l[0]); }
@@ -241,7 +245,7 @@
       $("nowLabel").textContent = "Right now";
       $("nowTask").textContent = "Loading your routine…";
       $("nowSub").textContent = "";
-      doneBtn.hidden = true; minor.hidden = true; link.hidden = true; $("nowNext").textContent = "";
+      doneBtn.hidden = true; minor.hidden = true; link.hidden = true; music.hidden = true; $("nowNext").textContent = "";
       tickNow(); return;
     }
 
@@ -275,7 +279,7 @@
       $("nowEmoji").innerHTML = I(done ? "moon" : asleep ? "sleep" : "rainbow");
       $("nowTask").textContent = done ? "That's the whole day." : asleep ? "Your day starts later." : "Nothing due right now.";
       $("nowSub").textContent = done ? "Phone across the room. Lights out." : asleep ? "Put the phone down and rest." : "Free time. Rest, or start the next thing early.";
-      doneBtn.hidden = true; link.hidden = true;
+      doneBtn.hidden = true; link.hidden = true; music.hidden = true;
       minor.hidden = done || asleep;
       if (!minor.hidden) {
         $("nowAlready").hidden = true;
@@ -740,6 +744,7 @@
   soundLabel();
 
   // ---------- tabs ----------
+  window.addEventListener("daybreak:go", (e) => goTab(e.detail));
   function goTab(name, scroll = true) {
     document.body.dataset.active = name;
     document.querySelectorAll(".tabbar button").forEach((b) => b.classList.toggle("on", b.dataset.go === name));
