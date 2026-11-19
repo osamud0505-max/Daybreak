@@ -1156,3 +1156,21 @@ section[data-tab="me"] > .section-head h2 { color: #fff; text-shadow: 0 0 10px r
 .miss-pick.on { color: #fff; background: var(--magic); border-color: rgba(255, 255, 255, .8); box-shadow: 0 0 12px rgba(196, 150, 255, .75); text-decoration: line-through; }
 #missFind { width: 100%; margin: 12px 0 4px; }
 #missFind:disabled { opacity: .5; }
+
+/* ---------- icon orbs: keep the light, give the drawing a deep contrasting ink ----------
+   Light pearly orb everywhere (day, night, dark mode); the line drawing uses a deep jewel tone
+   from the theme's own family so it never washes out or clashes. */
+:root { --orb: radial-gradient(circle at 34% 28%, #ffffff 0%, #f6f0ff 38%, #e6d9ff 72%, #d4c2ff 100%); --orb-ink: #5b3fa8; }
+details.block[data-block="Morning"] { --orb-ink: #8a3f8f; }  /* plum */
+details.block[data-block="Day"]     { --orb-ink: #4b45b8; }  /* indigo */
+details.block[data-block="Evening"] { --orb-ink: #9c3a7c; }  /* berry */
+details.block[data-block="Night"]   { --orb-ink: #4a33a0; }  /* deep violet */
+.task-emo, .now-emoji, body.night .task-emo, :root:has(body.night) .task-emo {
+  background: var(--orb) !important;
+  color: var(--orb-ink) !important;
+  border: 1px solid rgba(255, 255, 255, .9) !important;
+  box-shadow: 0 0 12px rgba(190, 160, 255, .55), inset 0 -3px 6px rgba(150, 120, 230, .25) !important;
+}
+.task-emo svg, .now-emoji svg { stroke-width: 2.1; }
+.now-emoji { --orb-ink: #5b3fa8; }
+.habit.done .task-emo { opacity: .75; }
