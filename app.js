@@ -79,12 +79,14 @@
     save(); renderAll();
     justDone = null;
   }
-  const SPARKS = ["✨", "💖", "⭐", "🌸", "💫", "🫧"];
+  const SPARK_COLORS = ["var(--pink-deep)", "var(--lilac-deep)", "var(--butter-deep)", "var(--mint-deep)", "var(--sky-deep)", "var(--peach-deep)"];
+  const I = window.DaybreakIcons.icon;
   function sparkle(target) {
     const r = target.getBoundingClientRect();
     for (let i = 0; i < 7; i++) {
       const a = (Math.PI * 2 * i) / 7 + Math.random() * 0.5;
-      const s = el("span", { className: "sparkle", textContent: SPARKS[(Math.random() * SPARKS.length) | 0] });
+      const s = el("span", { className: "sparkle", innerHTML: I(i % 2 ? "sparkle" : "heart") });
+      s.style.color = SPARK_COLORS[i % SPARK_COLORS.length];
       s.style.left = `${r.left + r.width / 2 - 7 + window.scrollX}px`;
       s.style.top = `${r.top + r.height / 2 - 9 + window.scrollY}px`;
       s.style.setProperty("--dx", `${Math.cos(a) * 34}px`);
@@ -149,7 +151,7 @@
       const late = n - current.min;
       $("nowLabel").textContent = late > 30 ? "Overdue" : "Right now";
       $("nowTask").textContent = current.name;
-      $("nowEmoji").textContent = current.icon || "🌤️";
+      $("nowEmoji").innerHTML = I(current.icon || "sun");
       const earlier = due.length - 1;
       $("nowSub").textContent =
         (late > 30 ? `Was due at ${fmtTime(current.time)}. Do it now, small is fine.` : `Due ${fmtTime(current.time)}.`) +
@@ -164,13 +166,13 @@
     } else if (next) {
       const first = tasks[0].min;
       $("nowLabel").textContent = n < first ? "Sleep" : "On track";
-      $("nowEmoji").textContent = n < first ? "😴" : "🌈";
+      $("nowEmoji").innerHTML = I(n < first ? "sleep" : "rainbow");
       $("nowTask").textContent = n < first ? "Your day starts later." : "Nothing overdue.";
       $("nowSub").textContent = n < first ? "Put the phone down and rest." : "Use the gap well, or start the next thing early.";
       doneBtn.hidden = true;
     } else {
       $("nowLabel").textContent = "Done";
-      $("nowEmoji").textContent = "🌙";
+      $("nowEmoji").innerHTML = I("moon");
       $("nowTask").textContent = "That's the whole day.";
       $("nowSub").textContent = "Phone across the room. Lights out.";
       doneBtn.hidden = true;
@@ -221,7 +223,7 @@
     $("mealIngredients").replaceChildren(...recipe.ingredients.map((i) => el("li", { textContent: i })));
     $("mealSteps").replaceChildren(...recipe.steps.map((s) => el("li", { textContent: s })));
     const made = isDone(MEAL_TASK[meal], todayKey());
-    $("mealMade").textContent = made ? "Made it ✓" : "I made it";
+    $("mealMade").textContent = made ? "Made it" : "I made it";
     $("mealMade").disabled = made;
   }
   $("mealName").addEventListener("click", () => {
@@ -264,10 +266,10 @@
     const heavy = pDay && (cyc().days[todayKey()].flow === "heavy" || (cyc().days[todayKey()].sym || []).includes("cramps"));
     $("moveNote").hidden = !(pDay && (pDay <= 2 || heavy));
     $("moveNote").textContent = c.task === "gym"
-      ? "🌷 Period day: it's okay to swap tonight for an easy walk or the bedtime stretch. Showing up gently still counts."
-      : "🌷 Period day: go slow, skip anything that hurts.";
+      ? "Period day: it's okay to swap tonight for an easy walk or the bedtime stretch. Showing up gently still counts."
+      : "Period day: go slow, skip anything that hurts.";
     const done = isDone(c.task, todayKey());
-    $("moveDone").textContent = done ? "Done ✓" : "Done";
+    $("moveDone").textContent = done ? "Done, nice" : "Done";
     $("moveDone").disabled = done;
     $("moveDone").onclick = () => { if (!isDone(c.task, todayKey())) { sparkle($("moveDone")); toggle(c.task); } };
   }
@@ -328,7 +330,7 @@
     $("cycleToday").hidden = !today;
     if (today) {
       const n = periodDayNumber(tk);
-      $("cycleBig").textContent = `Period day ${n} 🌷`;
+      $("cycleBig").textContent = `Period day ${n}`;
       $("cycleSub").textContent = n <= 2
         ? "Be gentle with yourself. Warm drink, water, and a lighter workout is still a win."
         : "Keep drinking water. Light movement can ease cramps.";
@@ -352,7 +354,7 @@
         const when = st.next.toLocaleDateString(undefined, { month: "short", day: "numeric" });
         $("cycleBig").textContent = days > 0 ? `Next period in about ${days} day${days === 1 ? "" : "s"}` : days === 0 ? "Period expected today" : `Period ${-days} day${days === -1 ? "" : "s"} late`;
         $("cycleSub").textContent = `Around ${when}. Based on ${st.learned ? `your average ${st.avgCycle}-day cycle` : "a typical 28-day cycle until you've logged two"}.` +
-          (days > 0 && days <= 3 ? " Pack supplies in your bag. 🎒" : "");
+          (days > 0 && days <= 3 ? " Pack supplies in your bag." : "");
       }
     }
     $("cycleEdit").textContent = cycleEditing ? "Done" : "Edit past days";
@@ -384,11 +386,11 @@
     const nowBlock = blockOf({ min: n });
     Object.entries(blocks).forEach(([name, list]) => {
       const doneN = list.filter((t) => isDone(t.id, tk)).length;
-      const BLOCK_EMO = { Morning: "🌅", Day: "🌼", Evening: "🌷", Night: "🌙" };
-      const h2 = el("h2", {}, el("span", { className: "emo", textContent: BLOCK_EMO[name] }), name);
+      const BLOCK_ICON = { Morning: "sunrise", Day: "daisy", Evening: "tulip", Night: "moon" };
+      const h2 = el("h2", {}, el("span", { className: "emo", innerHTML: I(BLOCK_ICON[name]) }), name);
       const head = el("summary", { className: "section-head" },
         h2,
-        el("span", { className: "pill", textContent: `${doneN} / ${list.length}${doneN === list.length ? " 🎉" : ""}` }));
+        el("span", { className: "pill", textContent: `${doneN} / ${list.length}${doneN === list.length ? " all done" : ""}` }));
       const ul = el("ul", { className: "habits" });
       list.forEach((t) => {
         const done = isDone(t.id, tk);
@@ -399,7 +401,7 @@
         const check = el("span", { className: "check", innerHTML: CHECK_SVG });
         const nameRow = el("span", { className: "habit-name" },
           el("span", { className: "time", textContent: fmtTime(t.time) }), t.name);
-        const icon = el("span", { className: "task-emo", textContent: t.icon || "•" });
+        const icon = el("span", { className: "task-emo", innerHTML: I(t.icon) });
         const dots = el("span", { className: "week" });
         week.forEach((d) => {
           const k = keyOf(d);
@@ -408,7 +410,7 @@
         });
         const main = el("span", { className: "habit-main" }, nameRow, dots);
         if (!done && missedYesterday(t)) main.append(el("span", { className: "nmt", textContent: "Never miss twice" }));
-        const st = el("span", { className: `streak${s ? " on" : ""}`, textContent: s ? `🔥${s}` : "" });
+        const st = el("span", { className: `streak${s ? " on" : ""}`, innerHTML: s ? `${I("flame")}${s}` : "" });
         st.title = `${s} day streak`;
         btn.append(icon, main, el("span", { className: "right" }, check, st));
         if (justDone === t.id) { btn.classList.add("pop"); requestAnimationFrame(() => sparkle(check)); }
@@ -500,7 +502,7 @@
       if (n) {
         cell.style.background = `color-mix(in srgb, var(--done) ${pct}%, var(--surface))`;
         cell.style.color = "var(--ink)";
-        if (n === total) cell.textContent = "🌸";
+        if (n === total) cell.innerHTML = I("flower");
       }
       cell.title = `${k}: ${n} of ${total}`;
       if (isPeriod(k)) cell.classList.add("period");
@@ -541,6 +543,8 @@
     renderSky(); renderHeader(); renderNow(); renderSleep(); renderPlan(); renderMeal(); renderMove();
     renderCycle(); renderRoutine(); renderFocus(); renderEvening(); renderMonth();
   }
+
+  document.querySelectorAll("[data-icon]").forEach((n) => (n.innerHTML = I(n.dataset.icon)));
 
   async function boot() {
     if (!state.firstDay) { state.firstDay = todayKey(); save(); }

@@ -604,4 +604,25 @@ details.block:not([open]) > summary {
 .month.editing { outline: 2px dashed var(--pink-deep); outline-offset: 3px; }
 .move-note { margin: 8px 0 0; font-size: 0.88rem; font-weight: 700; color: var(--pink-deep); }
 
+/* ---------- icons ---------- */
+.i { width: 1em; height: 1em; display: inline-block; vertical-align: -0.14em; }
+.label .emo { display: inline-flex; margin-right: 6px; font-size: 1.15em; vertical-align: -0.2em; }
+h2 .emo { display: inline-flex; margin-right: 8px; color: var(--tint-deep, var(--primary)); font-size: 1.05em; vertical-align: -0.12em; }
+.task-emo { color: color-mix(in srgb, var(--tint-deep) 85%, var(--ink)); font-size: 1.35rem; }
+.now-emoji {
+  display: grid;
+  place-items: center;
+  width: 54px; height: 54px;
+  border-radius: 18px;
+  background: var(--surface);
+  color: var(--tint-deep);
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+.streak { display: inline-flex; align-items: center; gap: 1px; }
+.streak .i { font-size: 0.95rem; }
+.month .d .i { font-size: 1.1rem; color: var(--ink); }
+.sparkle { font-size: 16px; line-height: 0; }
+.sparkle .i { stroke-width: 2.2; }
+
 [hidden] { display: none !important; }
