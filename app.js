@@ -232,7 +232,8 @@
     const minor = $("nowMinor");
     const link = $("nowLink");
     const act = d.active && tasks.find((t) => t.id === d.active.id);
-    if (d.active && !act) { delete d.active; save(); }
+    // Only drop a running step once the routine has loaded and the step really is not part of today.
+    if (d.active && !act && tasks.length) { delete d.active; save(); }
     const setLink = (t) => {
       const l = LINKS[t.id];
       link.hidden = !l;
