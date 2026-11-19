@@ -40,6 +40,12 @@
     const [h, m] = hhmm.split(":").map(Number);
     return `${((h + 11) % 12) + 1}:${String(m).padStart(2, "0")} ${h < 12 ? "AM" : "PM"}`;
   };
+  const howLong = (m) => (m >= 60 ? `${Math.floor(m / 60)} h${m % 60 ? ` ${m % 60} min` : ""}` : `${m} min`);
+  const fmtRange = (t) => {
+    if (!t.dur) return fmtTime(t.time);
+    const a = fmtTime(t.time), b = fmtTime(t.endTime);
+    return a.slice(-2) === b.slice(-2) ? `${a.slice(0, -3)} – ${b}` : `${a} – ${b}`;
+  };
   const blockOf = (t) => { const m = t.min; return m < 660 ? "Morning" : m < 1020 ? "Day" : m < 1260 ? "Evening" : "Night"; };
 
   // Is this task on the schedule for that date? (Gym nights, home-stretch nights.)
@@ -179,7 +185,7 @@
       $("nowEmoji").innerHTML = I(current.icon || "sun");
       const earlier = due.length - 1;
       $("nowSub").textContent =
-        (late > 30 ? `Was due at ${fmtTime(current.time)}. Do it now, small is fine.` : `Due ${fmtTime(current.time)}.`) +
+        (late > 30 ? `Was due at ${fmtTime(current.time)}. Do it now, small is fine.` : `${fmtRange(current)}${current.dur ? `, about ${howLong(current.dur)}` : ""}.`) +
         (earlier ? ` ${earlier} earlier ${earlier === 1 ? "task is" : "tasks are"} still open.` : "");
       doneBtn.hidden = false;
       doneBtn.onclick = () => { sparkle(doneBtn); toggle(current.id); };
@@ -465,7 +471,7 @@
         btn.setAttribute("aria-pressed", String(done));
         const check = el("span", { className: "check", innerHTML: CHECK_SVG });
         const nameRow = el("span", { className: "habit-name" },
-          el("span", { className: "time", textContent: fmtTime(t.time) }), t.name);
+          el("span", { className: "time", textContent: fmtRange(t) }), t.name);
         const icon = el("span", { className: "task-emo", innerHTML: I(t.icon) });
         const dots = el("span", { className: "week" });
         week.forEach((d) => {

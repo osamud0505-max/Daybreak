@@ -42,7 +42,7 @@ for (const t of globalThis.DaybreakSchedule.tasksFor(routine, dateKey)) {
   const at = zoned(+today.year, +today.month, +today.day, Math.floor(t.min / 60), t.min % 60);
   if (at < now + 60_000) continue; // already passed
   const headers = {
-    Title: t.name,
+    Title: t.dur ? `${t.name} · ${t.dur >= 60 ? `${Math.floor(t.dur / 60)} h${t.dur % 60 ? ` ${t.dur % 60} min` : ""}` : `${t.dur} min`}` : t.name,
     At: String(Math.floor(at / 1000)),
     Click: appUrl,
     Tags: "sunrise",

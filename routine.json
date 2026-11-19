@@ -18,14 +18,16 @@
       "name": "Out of bed",
       "push": "Feet on the floor. Don't negotiate with the bed. Open Daybreak.",
       "priority": "max",
-      "icon": "sun"
+      "icon": "sun",
+      "dur": 5
     },
     {
       "id": "teeth-am",
       "anchor": "wake",
       "offset": 5,
       "name": "Brush teeth",
-      "icon": "toothbrush"
+      "icon": "toothbrush",
+      "dur": 3
     },
     {
       "id": "face-am",
@@ -33,7 +35,8 @@
       "offset": 5,
       "name": "Wash face",
       "push": "Brush teeth, wash face, cold water. Two minutes.",
-      "icon": "bubbles"
+      "icon": "bubbles",
+      "dur": 3
     },
     {
       "id": "bed",
@@ -41,102 +44,130 @@
       "offset": 10,
       "name": "Make the bed",
       "push": "Make the bed. Once it's made, you can't crawl back in.",
-      "icon": "bed"
+      "icon": "bed",
+      "dur": 3
     },
     {
       "id": "stretch-am",
       "anchor": "wake",
       "offset": 15,
-      "name": "Morning stretch (10 min)",
+      "name": "Morning stretch",
       "push": "10-minute morning stretch. Today's flow is in Daybreak.",
-      "icon": "stretch"
+      "icon": "stretch",
+      "dur": 10
     },
     {
       "id": "walk-am",
       "anchor": "wake",
-      "offset": 25,
-      "name": "Morning walk (15 min)",
-      "push": "Morning walk, 15 minutes outside. Daylight in your eyes resets your body clock, so waking early gets easier.",
-      "icon": "shoe"
+      "offset": 30,
+      "name": "Morning walk",
+      "push": "Shoes and coat on. 15 minutes outside. Daylight in your eyes resets your body clock, so waking early gets easier.",
+      "icon": "shoe",
+      "dur": 20
     },
     {
       "id": "breakfast",
       "anchor": "wake",
-      "offset": 45,
+      "offset": 50,
       "name": "Real breakfast",
       "push": "Breakfast. Daybreak has a recipe ready for you. Aligners out, then brush and put them back in within 30 minutes.",
-      "icon": "bowl"
+      "icon": "bowl",
+      "dur": 25
     },
     {
       "id": "vitamins",
       "anchor": "wake",
-      "offset": 55,
+      "offset": 75,
       "name": "Vitamin D + C",
-      "push": "Vitamin D and C now, with breakfast. Vitamin D absorbs best with food.",
-      "icon": "pill"
+      "push": "Vitamin D and C now, while breakfast is still in you. Vitamin D absorbs best with food.",
+      "icon": "pill",
+      "dur": 2
     },
     {
       "id": "plan",
       "anchor": "wake",
-      "offset": 65,
+      "offset": 78,
       "name": "Set today's one thing",
       "push": "What's the one thing that makes today a win? Write it down.",
-      "icon": "star"
+      "icon": "star",
+      "dur": 5
     },
     {
       "id": "school",
       "anchor": "wake",
-      "offset": 75,
+      "offset": 90,
       "name": "School work",
       "push": "School block. Phone in another room, start with the smallest task.",
-      "icon": "book"
+      "icon": "book",
+      "until": "13:15"
     },
     {
       "id": "lunch",
-      "time": "13:30",
+      "time": "13:15",
       "name": "Lunch",
       "push": "Lunch time. Eat something real, not just a snack. Aligners out, then brush and put them back in within 30 minutes.",
-      "icon": "leaf"
+      "icon": "leaf",
+      "dur": 45
     },
     {
       "id": "tesol",
-      "time": "14:30",
+      "time": "14:15",
       "name": "TESOL course",
       "push": "TESOL time. Even 25 minutes counts. Start now.",
-      "icon": "apple"
+      "icon": "apple",
+      "dur": 60
     },
     {
       "id": "walk",
-      "time": "15:45",
+      "time": "15:30",
       "name": "Afternoon walk",
       "push": "Walk before the sun goes down. Shoes on, out the door, 20 minutes.",
-      "icon": "shoe"
+      "icon": "shoe",
+      "dur": 30
     },
     {
       "id": "dinner",
       "time": "18:00",
       "name": "Cook dinner",
       "push": "Cook tonight. Tonight's recipe is in Daybreak. Aligners out, then brush and put them back in within 30 minutes.",
-      "icon": "pot"
+      "icon": "pot",
+      "dur": 60
     },
     {
       "id": "read",
-      "time": "19:30",
+      "time": "19:15",
       "name": "Read",
       "push": "Read 15 pages. Paper, not phone.",
-      "icon": "book"
+      "icon": "book",
+      "dur": 30
     },
     {
       "id": "write",
-      "time": "20:00",
+      "time": "19:50",
       "name": "Write",
       "push": "Write a few lines. Anything counts.",
-      "icon": "pencil"
+      "icon": "pencil",
+      "dur": 30
+    },
+    {
+      "id": "gym-prep",
+      "time": "20:35",
+      "dur": 10,
+      "days": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "name": "Pack gym bag, head out",
+      "push": "Gym in 25 minutes. Water, shoes, headphones. Leave by 8:45 so you're there on time.",
+      "icon": "dumbbell"
     },
     {
       "id": "gym",
       "time": "21:00",
-      "name": "Gym (1 hour)",
+      "name": "Gym",
       "days": [
         0,
         1,
@@ -146,11 +177,12 @@
       ],
       "push": "Gym. Pack the bag and go. Tonight's plan is in Daybreak.",
       "priority": "high",
-      "icon": "dumbbell"
+      "icon": "dumbbell",
+      "dur": 60
     },
     {
       "id": "stretch",
-      "name": "Bedtime stretch + light exercise (20 min)",
+      "name": "Bedtime stretch + light exercise",
       "days": [
         5,
         6
@@ -158,22 +190,25 @@
       "push": "No gym tonight. 20 minutes of stretching and light exercise before bed. Tonight's routine is in Daybreak.",
       "anchor": "lightsOut",
       "offset": -85,
-      "icon": "moon"
+      "icon": "moon",
+      "dur": 20
     },
     {
       "id": "room",
       "anchor": "lightsOut",
       "offset": -50,
-      "name": "Shower + 10-minute room reset",
+      "name": "Shower + room reset",
       "push": "Shower, then a 10-minute room reset. Clothes, dishes, desk.",
-      "icon": "drop"
+      "icon": "drop",
+      "dur": 25
     },
     {
       "id": "teeth-pm",
       "anchor": "lightsOut",
       "offset": -20,
       "name": "Brush teeth",
-      "icon": "toothbrush"
+      "icon": "toothbrush",
+      "dur": 5
     },
     {
       "id": "face-pm",
@@ -181,7 +216,8 @@
       "offset": -20,
       "name": "Wash face",
       "push": "Brush teeth, wash face. Winding down.",
-      "icon": "bubbles"
+      "icon": "bubbles",
+      "dur": 5
     },
     {
       "id": "tomorrow",
@@ -189,7 +225,8 @@
       "offset": -10,
       "name": "Check-in + tomorrow's one thing",
       "push": "Evening check-in, then pick tomorrow's one thing.",
-      "icon": "thought"
+      "icon": "thought",
+      "dur": 10
     },
     {
       "id": "aligner-change",
@@ -199,7 +236,8 @@
       "icon": "sparkle",
       "name": "Switch to tray {next}",
       "push": "Tray change tonight. Switch to tray {next} of {total} after brushing. Pop tray {tray} in its case.",
-      "priority": "high"
+      "priority": "high",
+      "dur": 5
     },
     {
       "id": "phone-away",
@@ -208,7 +246,8 @@
       "name": "Phone away, lights out",
       "push": "Phone across the room, alarm across the room too. Lights out.",
       "priority": "high",
-      "icon": "phoneoff"
+      "icon": "phoneoff",
+      "dur": 0
     }
   ],
   "aligners": {

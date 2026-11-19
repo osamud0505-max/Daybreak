@@ -62,7 +62,8 @@
       .map((t) => (t.aligner ? { ...t, name: fill(t.name, al), push: fill(t.push, al) } : t))
       .map((t) => {
         let min = t.time ? toMin(t.time) : t.anchor === "wake" ? wake + (t.offset || 0) : lightsOut + (t.offset || 0);
-        return { ...t, min, time: toHHMM(min) };
+        const end = t.until ? Math.max(min, toMin(t.until)) : min + (t.dur || 0);
+        return { ...t, min, time: toHHMM(min), end, dur: end - min, endTime: toHHMM(end) };
       })
       .sort((a, b) => a.min - b.min);
   }
