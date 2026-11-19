@@ -2,9 +2,13 @@
 
 A quiet daily discipline log for your phone. Plain HTML, CSS and JavaScript, no build step, no account.
 
+- **Right now**: the one thing you should be doing, with a big Done button.
+- **Timed routine** (`routine.json`): morning, day, evening and night, each with a streak and the last 7 days. Gym Sunday to Thursday at 9 PM, a bedtime stretch on Friday and Saturday.
+- **Sleep shift**: wake-up moves 15 minutes earlier every 3 days, from 9:30 to 8:00, and lights-out moves with it.
+- **Never miss twice**: a missed day gets a gentle nudge instead of a zeroed streak.
+- **A recipe for every meal** (`recipes.json`) and **a workout for every day** (`workouts.json`).
 - **Today's one thing**: one line each morning.
-- **Habits** (max 8): tap to tick, with a streak and the last 7 days for each.
-- **No-phone time**: a 30, 60 or 90 minute timer with a slow breathing circle. Finishing it ticks "No-phone time".
+- **No-phone time**: a 30, 60 or 90 minute timer with a slow breathing circle.
 - **Evening check-in**: what went well, and one thing to do better tomorrow.
 - **Last 4 weeks**: each day shaded by how much you got done.
 
@@ -18,6 +22,10 @@ Open the GitHub Pages link, then:
 - **Android (Chrome):** ⋮ → Add to Home screen / Install app
 
 It works offline after the first visit.
+
+## Reminders
+
+`.github/workflows/reminders.yml` runs at 3 AM every day and schedules that day's reminders on [ntfy](https://ntfy.sh). Install the ntfy app and subscribe to the topic shown under "Reminders on your phone" in the app. To change times or wording, edit `routine.json`.
 
 ## Your data
 

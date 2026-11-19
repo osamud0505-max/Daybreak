@@ -1,0 +1,144 @@
+{
+  "morning": [
+    {
+      "name": "Gentle wake-up stretch",
+      "time": "10 min",
+      "steps": [
+        "Lying full-body reach, 30 s",
+        "Knees-to-chest hug, 45 s",
+        "Lying twist, 30 s per side",
+        "Cat-cow, 10 slow reps",
+        "Child's pose, 1 min",
+        "Standing forward fold, 45 s",
+        "Neck and shoulder rolls, 1 min",
+        "10 slow deep breaths by a window"
+      ]
+    },
+    {
+      "name": "Hips and back release",
+      "time": "10 min",
+      "steps": [
+        "Cat-cow, 10 reps",
+        "Hip flexor lunge stretch, 45 s per side",
+        "Figure-4 stretch, 45 s per side",
+        "Thread the needle, 30 s per side",
+        "Seated hamstring stretch, 45 s",
+        "Glute bridges, 12 slow reps",
+        "Chest opener against a doorway, 45 s"
+      ]
+    },
+    {
+      "name": "Stretch + light activation",
+      "time": "10 min",
+      "steps": [
+        "Arm circles and hip circles, 1 min",
+        "World's greatest stretch, 5 per side",
+        "Downward dog, pedal the feet, 45 s",
+        "15 bodyweight squats, slow",
+        "10 push-ups (knees are fine)",
+        "30-second plank",
+        "Side bend, 30 s per side"
+      ]
+    }
+  ],
+  "gym": {
+    "0": {
+      "name": "Full body A",
+      "time": "60 min",
+      "steps": [
+        "Warm-up: 5 min bike or incline walk",
+        "Goblet squat: 3 x 10",
+        "Dumbbell bench press: 3 x 10",
+        "Lat pulldown: 3 x 12",
+        "Romanian deadlift (dumbbells): 3 x 10",
+        "Shoulder press: 2 x 12",
+        "Plank: 3 x 30 s",
+        "Cool-down stretch: 5 min",
+        "Pick a weight where the last 2 reps feel hard but clean."
+      ]
+    },
+    "1": {
+      "name": "Easy cardio + core",
+      "time": "45 to 60 min",
+      "steps": [
+        "30 min incline treadmill walk, bike, or rower at a talking pace",
+        "Dead bug: 3 x 10 per side",
+        "Cable or band Pallof press: 3 x 10 per side",
+        "Side plank: 2 x 25 s per side",
+        "Back extension: 2 x 12",
+        "Stretch: 5 to 10 min"
+      ]
+    },
+    "2": {
+      "name": "Full body B",
+      "time": "60 min",
+      "steps": [
+        "Warm-up: 5 min rower or bike",
+        "Leg press: 3 x 12",
+        "Seated cable row: 3 x 12",
+        "Incline dumbbell press: 3 x 10",
+        "Walking lunges: 2 x 10 per leg",
+        "Lateral raises: 3 x 15",
+        "Biceps curls + triceps pushdowns: 2 x 12 each",
+        "Cool-down stretch: 5 min"
+      ]
+    },
+    "3": {
+      "name": "Cardio intervals + mobility",
+      "time": "45 min",
+      "steps": [
+        "5 min easy warm-up on bike",
+        "8 rounds: 30 s fast, 90 s easy",
+        "5 min easy cool-down",
+        "Hip and hamstring mobility: 10 min",
+        "Foam roll legs and back: 5 min"
+      ]
+    },
+    "4": {
+      "name": "Full body A (add a little)",
+      "time": "60 min",
+      "steps": [
+        "Warm-up: 5 min bike or incline walk",
+        "Goblet squat: 3 x 10 (a bit heavier than Sunday)",
+        "Dumbbell bench press: 3 x 10",
+        "Lat pulldown: 3 x 12",
+        "Romanian deadlift: 3 x 10",
+        "Face pulls: 3 x 15",
+        "Hanging knee raises: 3 x 10",
+        "Cool-down stretch: 5 min"
+      ]
+    }
+  },
+  "stretch": {
+    "5": {
+      "name": "Friday wind-down: stretch + light strength",
+      "time": "20 min",
+      "steps": [
+        "Easy march in place, 1 min",
+        "Cat-cow, 10 slow reps",
+        "Glute bridges, 2 x 15",
+        "Wall push-ups or knee push-ups, 2 x 10",
+        "Bird dog, 2 x 8 per side",
+        "Hip flexor stretch, 45 s per side",
+        "Figure-4 stretch, 45 s per side",
+        "Lying twist, 30 s per side",
+        "Legs up the wall, 2 min. Slow breathing."
+      ]
+    },
+    "6": {
+      "name": "Saturday wind-down: core + deep stretch",
+      "time": "20 min",
+      "steps": [
+        "Child's pose, 1 min",
+        "Dead bug, 2 x 10 per side",
+        "Side-lying leg raises, 2 x 12 per side",
+        "Plank, 2 x 30 s",
+        "Slow bodyweight squats, 2 x 10",
+        "Seated hamstring stretch, 1 min",
+        "Butterfly stretch, 1 min",
+        "Thread the needle, 30 s per side",
+        "Lie flat, 10 slow breaths (4 in, 6 out)"
+      ]
+    }
+  }
+}

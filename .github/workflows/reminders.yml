@@ -1,0 +1,23 @@
+name: Daily reminders
+
+on:
+  schedule:
+    # 08:00 UTC = 3 AM Toronto in winter, 4 AM in summer. Before the first reminder either way.
+    - cron: "0 8 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  schedule:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Schedule today's reminders on ntfy
+        run: node scripts/schedule-reminders.mjs
+        env:
+          NTFY_TOPIC: daybreak-6fbaba0405b956ff
