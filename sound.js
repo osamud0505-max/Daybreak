@@ -14,50 +14,43 @@
     ctx = new AC();
     // Master volume and a tiny echo to make it feel warm and roomy.
     out = ctx.createGain();
-    out.gain.value = 0.55;
-    const delay = ctx.createDelay();
-    delay.delayTime.value = 0.18;
-    const fb = ctx.createGain();
-    fb.gain.value = 0.25;
+    out.gain.value = 0.4;
+    // Low-pass keeps everything round and muffled, with no bright edges.
     const lp = ctx.createBiquadFilter();
     lp.type = "lowpass";
-    lp.frequency.value = 2600;
+    lp.frequency.value = 900;
+    lp.Q.value = 0.3;
     out.connect(lp);
     lp.connect(ctx.destination);
-    lp.connect(delay);
-    delay.connect(fb);
-    fb.connect(delay);
-    delay.connect(ctx.destination);
     return ctx;
   }
 
-  // A soft bell: sine fundamental plus a quiet octave, quick attack, long gentle fade.
-  function bell(freq, when = 0, vol = 0.12, length = 1.4) {
+  // A soft hum: a pure low sine that swells in slowly and fades out slowly.
+  // No sharp start and no overtones, so it never "dings".
+  function hum(freq, when = 0, vol = 0.1, length = 1.6) {
     const c = audio();
     if (!c) return;
     const t = c.currentTime + when;
-    [[1, 1], [2, 0.18], [3, 0.05]].forEach(([mult, amt]) => {
-      const o = c.createOscillator();
-      const g = c.createGain();
-      o.type = "sine";
-      o.frequency.value = freq * mult;
-      g.gain.setValueAtTime(0, t);
-      g.gain.linearRampToValueAtTime(vol * amt, t + 0.012);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + length / mult);
-      o.connect(g); g.connect(out);
-      o.start(t); o.stop(t + length + 0.1);
-    });
+    const o = c.createOscillator();
+    const g = c.createGain();
+    o.type = "sine";
+    o.frequency.value = freq;
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(vol, t + 0.12);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + length);
+    o.connect(g); g.connect(out);
+    o.start(t); o.stop(t + length + 0.1);
   }
 
-  const N = { C5: 523.25, D5: 587.33, E5: 659.25, G5: 783.99, A5: 880, C6: 1046.5, D6: 1174.66, E6: 1318.5, G4: 392, A4: 440 };
+  // Low, warm notes (around middle C), soft and spaced out.
+  const N = { G3: 196, A3: 220, C4: 261.63, D4: 293.66, E4: 329.63, G4: 392 };
   const SOUNDS = {
-    tap: () => bell(N.G5, 0, 0.035, 0.35),
-    done: () => { bell(N.E5, 0, 0.11); bell(N.A5, 0.09, 0.1); },
-    undo: () => bell(N.A4, 0, 0.05, 0.6),
-    block: () => [N.C5, N.E5, N.G5, N.C6].forEach((f, i) => bell(f, i * 0.09, 0.09)),
-    all: () => [N.C5, N.E5, N.G5, N.A5, N.C6, N.E6].forEach((f, i) => bell(f, i * 0.11, 0.09, 1.8)),
-    sky: () => { bell(N.D6, 0, 0.06, 0.9); bell(N.A5, 0.07, 0.05, 0.9); },
-    start: () => { bell(N.G4, 0, 0.08, 2.2); bell(N.D5, 0.25, 0.06, 2.2); },
+    done: () => { hum(N.C4, 0, 0.09, 1.4); hum(N.G4, 0.16, 0.05, 1.6); },
+    undo: () => {},
+    block: () => [N.C4, N.E4, N.G4].forEach((f, i) => hum(f, i * 0.22, 0.07, 1.8)),
+    all: () => [N.G3, N.C4, N.E4, N.G4].forEach((f, i) => hum(f, i * 0.3, 0.07, 2.4)),
+    sky: () => hum(N.E4, 0, 0.05, 1.2),
+    start: () => { hum(N.G3, 0, 0.07, 2.6); hum(N.D4, 0.3, 0.04, 2.6); },
   };
 
   window.DaybreakSound = {
