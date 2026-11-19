@@ -152,11 +152,10 @@
   // ---------- sky + header ----------
   function renderSky() {
     const h = new Date().getHours();
-    const period = h >= 5 && h < 9 ? "dawn" : h >= 9 && h < 17 ? "day" : h >= 17 && h < 21 ? "dusk" : "night";
-    document.body.dataset.period = period;
-    $("greeting").textContent =
-      { dawn: "Good morning", day: "Good day", dusk: "Good evening", night: "Rest well" }[period];
+    // The sky follows the real sun (sky.js); the greeting follows the clock.
     if (window.DaybreakSky) window.DaybreakSky.update();
+    else document.body.dataset.period = h >= 7 && h < 17 ? "day" : "night";
+    $("greeting").textContent = h >= 4 && h < 12 ? "Good morning" : h < 17 && h >= 12 ? "Good afternoon" : h >= 17 && h < 22 ? "Good evening" : "Rest well";
   }
 
   function renderHeader() {
