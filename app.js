@@ -179,7 +179,7 @@
     card.classList.toggle("calm", !current);
 
     if (current) {
-      const late = n - current.min;
+      const late = n - (current.end ?? current.min) + (current.dur ? 30 : 0);
       $("nowLabel").textContent = late > 30 ? "Overdue" : "Right now";
       $("nowTask").textContent = current.name;
       $("nowEmoji").innerHTML = I(current.icon || "sun");
@@ -465,7 +465,7 @@
       const ul = el("ul", { className: "habits" });
       list.forEach((t) => {
         const done = isDone(t.id, tk);
-        const late = !done && t.min + 30 < n;
+        const late = !done && (t.end ?? t.min) + (t.dur ? 0 : 30) < n;
         const s = streak(t);
         const btn = el("button", { type: "button", className: `habit${done ? " done" : ""}${late ? " late" : ""}` });
         btn.setAttribute("aria-pressed", String(done));
