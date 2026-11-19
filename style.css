@@ -884,3 +884,85 @@ body.night .tabbar { background: rgba(34, 27, 70, .72); border-color: rgba(200, 
 
 /* leave a window onto the sky above the first card */
 header.top { margin-bottom: 70px; }
+
+/* ---------- enchanted panels ---------- */
+:root {
+  --spark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff8e6' d='M12 1c.8 6 3.6 9.6 11 11-7.4 1.4-10.2 5-11 11-.8-6-3.6-9.6-11-11 7.4-1.4 10.2-5 11-11z'/%3E%3C/svg%3E");
+  --glass-hi: rgba(255, 255, 255, .55);
+  --glass-row: linear-gradient(135deg, rgba(255, 255, 255, .78), rgba(255, 255, 255, .5));
+  --row-edge: rgba(255, 255, 255, .85);
+  --glow: rgba(170, 140, 255, .32);
+  --dust: radial-gradient(1px 1px at 18% 30%, rgba(255, 255, 255, .9), transparent 60%),
+          radial-gradient(1.4px 1.4px at 72% 18%, rgba(255, 255, 255, .8), transparent 60%),
+          radial-gradient(1px 1px at 86% 64%, rgba(255, 255, 255, .7), transparent 60%),
+          radial-gradient(1.2px 1.2px at 40% 82%, rgba(255, 255, 255, .7), transparent 60%),
+          radial-gradient(1px 1px at 58% 46%, rgba(255, 255, 255, .6), transparent 60%);
+}
+body.night, :root:has(body.night) {
+  --glass-row: linear-gradient(135deg, rgba(70, 56, 140, .55), rgba(34, 27, 70, .45));
+  --row-edge: rgba(200, 180, 255, .32);
+  --glow: rgba(160, 130, 255, .45);
+}
+@media (prefers-color-scheme: dark) { :root { --glass-row: linear-gradient(135deg, rgba(70, 56, 140, .55), rgba(34, 27, 70, .45)); --row-edge: rgba(200, 180, 255, .3); --glow: rgba(160, 130, 255, .4); } }
+
+/* cards: starry glass, a glowing edge, twinkling corner sparkles and a slow light sweep */
+.card { position: relative; isolation: isolate; overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .35) inset, 0 0 26px var(--glow), 0 8px 22px rgba(60, 40, 120, .12); }
+.card > * { position: relative; z-index: 1; }
+.card::before {
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none; border-radius: inherit;
+  background: var(--spark) right 14px top 12px / 14px no-repeat, var(--spark) right 34px top 26px / 8px no-repeat,
+              var(--spark) left 12px bottom 14px / 10px no-repeat, var(--dust),
+              linear-gradient(160deg, var(--glass-hi), transparent 45%);
+  animation: cardtwinkle 5s ease-in-out infinite;
+}
+.card::after {
+  content: ""; position: absolute; inset: -40% -60%; z-index: 0; pointer-events: none;
+  background: linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, .28) 50%, transparent 58%);
+  transform: translateX(-60%); animation: sweep 9s ease-in-out infinite;
+}
+.card:nth-of-type(2n)::after { animation-delay: -3s; } .card:nth-of-type(3n)::after { animation-delay: -6s; }
+@keyframes cardtwinkle { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
+@keyframes sweep { 0%, 55% { transform: translateX(-60%); } 85%, 100% { transform: translateX(60%); } }
+body.night .card::before { --glass-hi: rgba(200, 180, 255, .16); }
+body.night .label, body.night h2 { text-shadow: 0 0 10px rgba(200, 170, 255, .55); }
+
+/* the "never miss twice" banner: glowing glass instead of a dashed box */
+.banner { position: relative; overflow: hidden; border: 1.5px solid var(--row-edge); background: var(--glass-row);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  box-shadow: 0 0 22px rgba(255, 150, 200, .35); padding-right: 38px; }
+.banner::after { content: ""; position: absolute; right: 12px; top: 12px; width: 16px; height: 16px; background: var(--spark) center / contain no-repeat; filter: drop-shadow(0 0 6px #ffb3d9); animation: cardtwinkle 3s ease-in-out infinite; }
+
+/* routine block headers: glowing glass pills */
+details.block > summary.section-head {
+  padding: 12px 16px; border-radius: 22px; border: 1.5px solid var(--row-edge); background: var(--glass-row);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--tint-deep) 30%, transparent);
+}
+details.block[open] > summary.section-head { margin-bottom: 10px; }
+
+/* task rows: glass with a soft inner shine and glow */
+.habit {
+  background: var(--glass-row); border: 1.5px solid var(--row-edge);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--tint-deep) 22%, transparent), inset 0 1px 0 rgba(255, 255, 255, .5);
+}
+.habit.done { background: linear-gradient(135deg, color-mix(in srgb, var(--done-wash) 85%, transparent), color-mix(in srgb, var(--sky) 60%, transparent)); }
+.habit.late { box-shadow: 0 0 18px color-mix(in srgb, var(--late) 40%, transparent), inset 0 1px 0 rgba(255, 255, 255, .5); }
+.task-emo {
+  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, .95), color-mix(in srgb, var(--tint) 85%, white) 70%) !important;
+  box-shadow: 0 0 14px color-mix(in srgb, var(--tint-deep) 40%, transparent);
+}
+body.night .task-emo, :root:has(body.night) .task-emo { background: radial-gradient(circle at 35% 30%, rgba(120, 100, 200, .9), rgba(50, 40, 100, .9) 70%) !important; }
+.check { box-shadow: 0 0 10px color-mix(in srgb, var(--tint-deep) 35%, transparent); }
+.habit.done .check { background: linear-gradient(135deg, var(--done), var(--sky-deep)); }
+
+/* big buttons: a pastel gradient with a glow */
+main.wrap .btn.big, #meal .btn:not(.soft-btn), #move .btn, main.wrap .cycle .btn:not(.soft-btn) {
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, .35), rgba(255, 255, 255, 0) 55%), linear-gradient(110deg, var(--pink-deep), var(--lilac-deep));
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--lilac-deep) 70%, black 10%), 0 0 22px color-mix(in srgb, var(--pink-deep) 45%, transparent);
+}
+main.wrap .now.active .btn.big { background-image: linear-gradient(180deg, rgba(255, 255, 255, .35), rgba(255, 255, 255, 0) 55%), linear-gradient(110deg, var(--lilac-deep), var(--sky-deep)); }
+.soft-btn { background: var(--glass-row) !important; border: 1.5px solid var(--row-edge); }
+input[type="text"], textarea { background: var(--glass-row); border-color: var(--row-edge); }
+@media (prefers-reduced-motion: reduce) { .card::before, .card::after, .banner::after { animation: none !important; } .card::after { display: none; } }
