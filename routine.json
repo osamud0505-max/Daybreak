@@ -14,7 +14,7 @@
     {
       "id": "wake",
       "name": "Out of bed",
-      "push": "Feet on the floor. Don't negotiate with the bed. Open Daybreak.",
+      "push": "Feet on the floor. Don't negotiate with the bed. Open Daybreak and press Done. It'll walk you through the morning one step at a time.",
       "priority": "max",
       "icon": "sun",
       "anchor": "wake",
@@ -27,16 +27,18 @@
       "icon": "toothbrush",
       "anchor": "wake",
       "offset": 5,
-      "dur": 10
+      "dur": 5,
+      "quiet": true
     },
     {
       "id": "face-am",
-      "name": "Wash face",
+      "name": "Wash face + skincare",
       "push": "Brush teeth, wash face, cold water. Two minutes.",
       "icon": "bubbles",
       "anchor": "wake",
-      "offset": 5,
-      "dur": 10
+      "offset": 10,
+      "dur": 10,
+      "quiet": true
     },
     {
       "id": "bed",
@@ -44,8 +46,9 @@
       "push": "Make the bed. Once it's made, you can't crawl back in.",
       "icon": "bed",
       "anchor": "wake",
-      "offset": 15,
-      "dur": 5
+      "offset": 20,
+      "dur": 5,
+      "quiet": true
     },
     {
       "id": "stretch-am",
@@ -53,8 +56,9 @@
       "push": "10-minute morning stretch. Today's flow is in Daybreak.",
       "icon": "stretch",
       "anchor": "wake",
-      "offset": 20,
-      "dur": 15
+      "offset": 25,
+      "dur": 15,
+      "quiet": true
     },
     {
       "id": "walk-am",
@@ -62,8 +66,9 @@
       "push": "Shoes and coat on. 15 minutes outside. Daylight in your eyes resets your body clock, so waking early gets easier.",
       "icon": "shoe",
       "anchor": "wake",
-      "offset": 35,
-      "dur": 25
+      "offset": 40,
+      "dur": 25,
+      "quiet": true
     },
     {
       "id": "shower-am",
@@ -71,8 +76,9 @@
       "push": "Shower, body only (hair is tonight), then get dressed for the day.",
       "icon": "drop",
       "anchor": "wake",
-      "offset": 60,
-      "dur": 25
+      "offset": 65,
+      "dur": 25,
+      "quiet": true
     },
     {
       "id": "breakfast",
@@ -80,7 +86,7 @@
       "push": "Breakfast. Daybreak has a recipe ready for you. Aligners out, then brush and put them back in within 30 minutes.",
       "icon": "bowl",
       "anchor": "wake",
-      "offset": 85,
+      "offset": 90,
       "dur": 40
     },
     {
@@ -89,8 +95,9 @@
       "push": "Vitamin D and C now, while breakfast is still in you. Vitamin D absorbs best with food.",
       "icon": "pill",
       "anchor": "wake",
-      "offset": 118,
-      "dur": 2
+      "offset": 123,
+      "dur": 2,
+      "quiet": true
     },
     {
       "id": "plan",
@@ -98,8 +105,9 @@
       "push": "What's the one thing that makes today a win? Write it down.",
       "icon": "star",
       "anchor": "wake",
-      "offset": 125,
-      "dur": 5
+      "offset": 130,
+      "dur": 5,
+      "quiet": true
     },
     {
       "id": "school",
@@ -107,7 +115,7 @@
       "push": "School block. Phone in another room, start with the smallest task.",
       "icon": "book",
       "anchor": "wake",
-      "offset": 135,
+      "offset": 140,
       "until": "14:00"
     },
     {
@@ -187,7 +195,8 @@
       "priority": "high",
       "icon": "dumbbell",
       "time": "21:00",
-      "dur": 80
+      "dur": 80,
+      "quiet": true
     },
     {
       "id": "stretch",
@@ -199,7 +208,7 @@
       "push": "No gym tonight. 20 minutes of stretching and light exercise before bed. Tonight's routine is in Daybreak.",
       "icon": "moon",
       "anchor": "lightsOut",
-      "offset": -110,
+      "offset": -120,
       "dur": 30
     },
     {
@@ -215,17 +224,19 @@
       "name": "Brush teeth",
       "icon": "toothbrush",
       "anchor": "lightsOut",
-      "offset": -15,
-      "dur": 7
+      "offset": -25,
+      "dur": 5,
+      "quiet": true
     },
     {
       "id": "face-pm",
-      "name": "Wash face",
+      "name": "Wash face + skincare",
       "push": "Brush teeth, wash face. Winding down.",
       "icon": "bubbles",
       "anchor": "lightsOut",
-      "offset": -15,
-      "dur": 7
+      "offset": -20,
+      "dur": 10,
+      "quiet": true
     },
     {
       "id": "tomorrow",
@@ -233,16 +244,17 @@
       "push": "Evening check-in, then pick tomorrow's one thing.",
       "icon": "thought",
       "anchor": "lightsOut",
-      "offset": -5,
-      "dur": 5
+      "offset": -7,
+      "dur": 5,
+      "quiet": true
     },
     {
       "id": "shower-pm",
       "name": "Night shower (body + hair)",
-      "push": "Shower time: body and hair, music on. Aim to be out in about 50 minutes so you can dry your hair and still make lights out.",
+      "push": "Shower time: body and hair. When you're out, open Daybreak. It'll walk you through the rest of the night.",
       "icon": "drop",
       "anchor": "lightsOut",
-      "offset": -65,
+      "offset": -75,
       "dur": 50
     },
     {
@@ -253,7 +265,7 @@
       "push": "Tray change tonight. Switch to tray {next} of {total} after brushing. Pop tray {tray} in its case.",
       "priority": "high",
       "anchor": "lightsOut",
-      "offset": -8,
+      "offset": -10,
       "dur": 3
     },
     {

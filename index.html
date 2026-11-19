@@ -17,7 +17,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=17">
+  <link rel="stylesheet" href="style.css?v=18">
 </head>
 <body>
   <div class="sky" id="sky" aria-hidden="true">
@@ -44,7 +44,12 @@
       <p class="label" id="nowLabel">Right now</p>
       <p class="now-task" id="nowTask"></p>
       <p class="now-sub" id="nowSub"></p>
+      <p class="now-timer" id="nowTimer" hidden>0:00</p>
       <button class="btn big" id="nowDone" type="button">Done</button>
+      <div class="now-minor" id="nowMinor" hidden>
+        <button class="link" id="nowAlready" type="button">Already did it</button>
+        <button class="link" id="nowSkip" type="button">Skip today</button>
+      </div>
       <button class="link now-link" id="nowLink" type="button" hidden></button>
       <p class="now-next" id="nowNext"></p>
     </section>
@@ -183,11 +188,11 @@
     <button type="button" data-go="me"><span data-icon="heart"></span>Me</button>
   </nav>
 
-  <script src="icons.js?v=17"></script>
-  <script src="sound.js?v=17"></script>
-  <script src="schedule.js?v=17"></script>
-  <script src="app.js?v=17"></script>
-  <script src="sky.js?v=17"></script>
-  <script src="fairy.js?v=17"></script>
+  <script src="icons.js?v=18"></script>
+  <script src="sound.js?v=18"></script>
+  <script src="schedule.js?v=18"></script>
+  <script src="app.js?v=18"></script>
+  <script src="sky.js?v=18"></script>
+  <script src="fairy.js?v=18"></script>
 </body>
 </html>

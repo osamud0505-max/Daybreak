@@ -811,3 +811,15 @@ body:not([data-active="today"]) .top { padding-bottom: 16px; }
 body:not([data-active="today"]) .progress { display: none; }
 
 [hidden] { display: none !important; }
+
+/* ---------- step-by-step flow ---------- */
+.now-timer {
+  margin: 2px 0 14px; font-family: "Fredoka", sans-serif; font-weight: 600;
+  font-size: 3rem; line-height: 1; letter-spacing: 0.02em; color: var(--primary);
+  font-variant-numeric: tabular-nums;
+}
+.now-timer.over { color: var(--pink-deep); }
+.now.active { --tint: var(--lilac); }
+.now.active .btn.big { background: var(--primary); box-shadow: 0 4px 0 #6d4fb8; }
+.now-minor { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 10px; }
+.now-minor .link { font-size: 0.9rem; color: var(--ink-soft); }

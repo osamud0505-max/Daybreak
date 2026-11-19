@@ -38,7 +38,7 @@ const today = Object.fromEntries(
 const dateKey = `${today.year}-${today.month}-${today.day}`;
 let sent = 0;
 for (const t of globalThis.DaybreakSchedule.tasksFor(routine, dateKey)) {
-  if (!t.push) continue;
+  if (!t.push || t.quiet) continue; // quiet steps are walked through in the app, not pushed
   const at = zoned(+today.year, +today.month, +today.day, Math.floor(t.min / 60), t.min % 60);
   if (at < now + 60_000) continue; // already passed
   const headers = {

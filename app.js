@@ -46,6 +46,10 @@
     const a = fmtTime(t.time), b = fmtTime(t.endTime);
     return a.slice(-2) === b.slice(-2) ? `${a.slice(0, -3)} – ${b}` : `${a} – ${b}`;
   };
+  const took = (id) => {
+    const x = state.log[todayKey()] && state.log[todayKey()].times && state.log[todayKey()].times[id];
+    return x ? ` · took ${howLong(Math.max(1, Math.round((x.e - x.s) / 60000)))}` : "";
+  };
   const blockOf = (t) => { const m = t.min; return m < 660 ? "Morning" : m < 1020 ? "Day" : m < 1260 ? "Evening" : "Night"; };
 
   // Is this task on the schedule for that date? (Gym nights, home-stretch nights.)
@@ -79,6 +83,11 @@
   function toggle(id) {
     const d = day(todayKey());
     const adding = !d.done.includes(id);
+    if (d.active && d.active.id === id) {
+      if (adding) (d.times ||= {})[id] = { s: d.active.s, e: Date.now() };
+      delete d.active;
+    }
+    if (adding && d.skip) d.skip = d.skip.filter((x) => x !== id);
     d.done = adding ? [...d.done, id] : d.done.filter((x) => x !== id);
     if (navigator.vibrate) navigator.vibrate(adding ? [8, 40, 8] : 8);
     justDone = adding ? id : null;
@@ -167,55 +176,152 @@
     } else banner.hidden = true;
   }
 
-  // ---------- right now ----------
+  // ---------- right now: step-by-step flow ----------
+  // Press Start, do the thing, press Done. Daybreak times it and hands you the next step.
+  const LINKS = { breakfast: ["meals", "See the recipe"], lunch: ["meals", "See the recipe"], dinner: ["meals", "See the recipe"],
+    "stretch-am": ["move", "See the stretches"], gym: ["move", "See tonight's plan"], stretch: ["move", "See tonight's routine"] };
+  const mmss = (ms) => { const s = Math.max(0, Math.floor(ms / 1000)); const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60);
+    return h ? `${h}:${String(m).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}` : `${m}:${String(s % 60).padStart(2, "0")}`; };
+  // Your real average for a task, from the last 7 times you timed it.
+  function usual(id) {
+    const mins = Object.keys(state.log).sort().reverse()
+      .map((k) => state.log[k].times && state.log[k].times[id]).filter(Boolean)
+      .slice(0, 7).map((x) => (x.e - x.s) / 60000).filter((m) => m >= 0.5 && m < 300);
+    return mins.length ? Math.max(1, Math.round(mins.reduce((a, b) => a + b, 0) / mins.length)) : 0;
+  }
+  function pickCurrent(n) {
+    const tk = todayKey();
+    const skip = (state.log[tk] && state.log[tk].skip) || [];
+    const open = tasks.filter((t) => !isDone(t.id, tk) && !skip.includes(t.id));
+    // Oldest unfinished step first, so you go in order. Steps over 2 hours past their end drop off.
+    const due = open.filter((t) => t.min <= n && (t.end ?? t.min) + 120 >= n);
+    if (due.length) return { t: due[0], due: due.length, early: false };
+    const next = open.find((t) => t.min > n);
+    return next ? { t: next, due: 0, early: true, gap: next.min - n } : null;
+  }
+  function startTask(id) {
+    const d = day(todayKey());
+    d.active = { id, s: Date.now() };
+    sound("start");
+    save(); renderAll();
+  }
+  let overNotified = null;
+  function tickNow() {
+    const d = state.log[todayKey()];
+    const act = d && d.active;
+    const timer = $("nowTimer");
+    if (!act) { timer.hidden = true; return; }
+    const t = tasks.find((x) => x.id === act.id);
+    const ms = Date.now() - act.s;
+    timer.hidden = false;
+    timer.textContent = mmss(ms);
+    const plan = (t && t.dur) || 0;
+    const over = plan && ms > plan * 60000;
+    timer.classList.toggle("over", !!over);
+    if (over && overNotified !== act.id + act.s && document.visibilityState === "visible") { overNotified = act.id + act.s; sound("sky"); }
+  }
   function renderNow() {
     const tk = todayKey();
     const n = nowMins();
-    const due = tasks.filter((t) => t.min <= n && !isDone(t.id, tk));
-    const next = tasks.find((t) => t.min > n && !isDone(t.id, tk));
-    const current = due[due.length - 1];
+    const d = state.log[tk] || {};
     const doneBtn = $("nowDone");
     const card = $("now");
-    card.classList.toggle("calm", !current);
+    const minor = $("nowMinor");
+    const link = $("nowLink");
+    const act = d.active && tasks.find((t) => t.id === d.active.id);
+    if (d.active && !act) { delete d.active; save(); }
+    const setLink = (t) => {
+      const l = LINKS[t.id];
+      link.hidden = !l;
+      if (l) { link.textContent = `${l[1]} ›`; link.onclick = () => goTab(l[0]); }
+    };
+    card.classList.toggle("calm", false);
+    card.classList.toggle("active", !!act);
 
-    if (current) {
-      const late = n - (current.end ?? current.min) + (current.dur ? 30 : 0);
-      $("nowLabel").textContent = late > 30 ? "Overdue" : "Right now";
-      $("nowTask").textContent = current.name;
-      $("nowEmoji").innerHTML = I(current.icon || "sun");
-      const earlier = due.length - 1;
-      $("nowSub").textContent =
-        (late > 30 ? `Was due at ${fmtTime(current.time)}. Do it now, small is fine.` : `${fmtRange(current)}${current.dur ? `, about ${howLong(current.dur)}` : ""}.`) +
-        (earlier ? ` ${earlier} earlier ${earlier === 1 ? "task is" : "tasks are"} still open.` : "");
-      doneBtn.hidden = false;
-      doneBtn.onclick = () => { sparkle(doneBtn); toggle(current.id); };
-      const link = { breakfast: ["meals", "See the recipe"], lunch: ["meals", "See the recipe"], dinner: ["meals", "See the recipe"],
-        "stretch-am": ["move", "See the stretches"], gym: ["move", "See tonight's plan"], stretch: ["move", "See tonight's routine"] }[current.id];
-      $("nowLink").hidden = !link;
-      if (link) { $("nowLink").textContent = `${link[1]} ›`; $("nowLink").onclick = () => goTab(link[0]); }
-      return void ($("nowNext").textContent = next ? `Up next: ${next.name} at ${fmtTime(next.time)}` : "");
-    } else if (!tasks.length) {
+    if (!tasks.length) {
       $("nowLabel").textContent = "Right now";
       $("nowTask").textContent = "Loading your routine…";
       $("nowSub").textContent = "";
-      doneBtn.hidden = true;
-    } else if (next) {
-      const first = tasks[0].min;
-      $("nowLabel").textContent = n < first ? "Sleep" : "On track";
-      $("nowEmoji").innerHTML = I(n < first ? "sleep" : "rainbow");
-      $("nowTask").textContent = n < first ? "Your day starts later." : "Nothing overdue.";
-      $("nowSub").textContent = n < first ? "Put the phone down and rest." : "Use the gap well, or start the next thing early.";
-      doneBtn.hidden = true;
-    } else {
-      $("nowLabel").textContent = "Done";
-      $("nowEmoji").innerHTML = I("moon");
-      $("nowTask").textContent = "That's the whole day.";
-      $("nowSub").textContent = "Phone across the room. Lights out.";
-      doneBtn.hidden = true;
+      doneBtn.hidden = true; minor.hidden = true; link.hidden = true; $("nowNext").textContent = "";
+      tickNow(); return;
     }
-    $("nowLink").hidden = true;
-    $("nowNext").textContent = next ? `Up next: ${next.name} at ${fmtTime(next.time)}` : "";
+
+    if (act) {
+      const u = usual(act.id);
+      $("nowLabel").textContent = "Doing now";
+      $("nowTask").textContent = act.name;
+      $("nowEmoji").innerHTML = I(act.icon || "sun");
+      $("nowSub").textContent = [act.dur ? `Planned about ${howLong(act.dur)}.` : "", u ? `You usually take ${howLong(u)}.` : ""].join(" ").trim();
+      doneBtn.hidden = false;
+      doneBtn.textContent = "Done";
+      doneBtn.onclick = () => { sparkle(doneBtn); toggle(act.id); };
+      minor.hidden = false;
+      $("nowAlready").hidden = true;
+      $("nowSkip").textContent = "Stop timer";
+      $("nowSkip").onclick = () => { delete day(tk).active; save(); renderAll(); };
+      setLink(act);
+      const after = pickAfter(act.id);
+      $("nowNext").textContent = after ? `Then: ${after.name}` : "";
+      tickNow(); return;
+    }
+
+    const pick = pickCurrent(n);
+    if (!pick || (pick.early && pick.gap > 15)) {
+      // Nothing due: calm card, with the option to start the next thing early.
+      card.classList.add("calm");
+      const first = tasks[0].min;
+      const asleep = n < first;
+      const done = !pick;
+      $("nowLabel").textContent = done ? "Done" : asleep ? "Sleep" : "On track";
+      $("nowEmoji").innerHTML = I(done ? "moon" : asleep ? "sleep" : "rainbow");
+      $("nowTask").textContent = done ? "That's the whole day." : asleep ? "Your day starts later." : "Nothing due right now.";
+      $("nowSub").textContent = done ? "Phone across the room. Lights out." : asleep ? "Put the phone down and rest." : "Free time. Rest, or start the next thing early.";
+      doneBtn.hidden = true; link.hidden = true;
+      minor.hidden = done || asleep;
+      if (!minor.hidden) {
+        $("nowAlready").hidden = true;
+        $("nowSkip").textContent = `Start "${pick.t.name}" now`;
+        $("nowSkip").onclick = () => startTask(pick.t.id);
+      }
+      $("nowNext").textContent = pick ? `Up next: ${pick.t.name} at ${fmtTime(pick.t.time)}` : "";
+      tickNow(); return;
+    }
+
+    const t = pick.t;
+    const late = n - (t.end ?? t.min);
+    const u = usual(t.id);
+    $("nowLabel").textContent = pick.early ? "Up next" : late > 15 ? "Overdue" : "Right now";
+    $("nowTask").textContent = t.name;
+    $("nowEmoji").innerHTML = I(t.icon || "sun");
+    const others = pick.due - 1;
+    $("nowSub").textContent = [
+      late > 15 ? `Planned ${fmtRange(t)}. You're behind, that's okay. Start it now.` : `${fmtRange(t)}${t.dur ? `, about ${howLong(t.dur)}` : ""}.`,
+      u ? `You usually take ${howLong(u)}.` : "",
+      others > 0 ? `${others} more ${others === 1 ? "step is" : "steps are"} waiting after this.` : "",
+    ].filter(Boolean).join(" ");
+    doneBtn.hidden = false;
+    // Every real step gets Start so it can be timed; getting up and tiny steps just get Done.
+    const timed = (t.dur || 0) >= 5 && t.id !== "wake";
+    doneBtn.textContent = timed ? "Start" : "Done";
+    doneBtn.onclick = () => { if (timed) startTask(t.id); else { sparkle(doneBtn); toggle(t.id); } };
+    minor.hidden = false;
+    $("nowAlready").hidden = !timed;
+    $("nowAlready").onclick = () => toggle(t.id);
+    $("nowSkip").textContent = "Skip today";
+    $("nowSkip").onclick = () => { const dd = day(tk); dd.skip = [...(dd.skip || []), t.id]; save(); renderAll(); };
+    setLink(t);
+    const after = pickAfter(t.id);
+    $("nowNext").textContent = after ? `Then: ${after.name}${after.min > n + 15 ? ` at ${fmtTime(after.time)}` : ""}` : "";
+    tickNow();
   }
+  // The step that comes after `id` (skipping finished or skipped ones).
+  function pickAfter(id) {
+    const tk = todayKey();
+    const skip = (state.log[tk] && state.log[tk].skip) || [];
+    const i = tasks.findIndex((t) => t.id === id);
+    return tasks.slice(i + 1).find((t) => !isDone(t.id, tk) && !skip.includes(t.id));
+  }
+  setInterval(() => { if (document.visibilityState === "visible") tickNow(); }, 1000);
 
   // ---------- intention ----------
   function renderPlan() {
@@ -471,7 +577,7 @@
         btn.setAttribute("aria-pressed", String(done));
         const check = el("span", { className: "check", innerHTML: CHECK_SVG });
         const nameRow = el("span", { className: "habit-name" },
-          el("span", { className: "time", textContent: fmtRange(t) }), t.name);
+          el("span", { className: "time", textContent: fmtRange(t) + took(t.id) }), t.name);
         const icon = el("span", { className: "task-emo", innerHTML: I(t.icon) });
         const dots = el("span", { className: "week" });
         week.forEach((d) => {
