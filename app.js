@@ -183,6 +183,11 @@
         (earlier ? ` ${earlier} earlier ${earlier === 1 ? "task is" : "tasks are"} still open.` : "");
       doneBtn.hidden = false;
       doneBtn.onclick = () => { sparkle(doneBtn); toggle(current.id); };
+      const link = { breakfast: ["meals", "See the recipe"], lunch: ["meals", "See the recipe"], dinner: ["meals", "See the recipe"],
+        "stretch-am": ["move", "See the stretches"], gym: ["move", "See tonight's plan"], stretch: ["move", "See tonight's routine"] }[current.id];
+      $("nowLink").hidden = !link;
+      if (link) { $("nowLink").textContent = `${link[1]} ›`; $("nowLink").onclick = () => goTab(link[0]); }
+      return void ($("nowNext").textContent = next ? `Up next: ${next.name} at ${fmtTime(next.time)}` : "");
     } else if (!tasks.length) {
       $("nowLabel").textContent = "Right now";
       $("nowTask").textContent = "Loading your routine…";
@@ -202,6 +207,7 @@
       $("nowSub").textContent = "Phone across the room. Lights out.";
       doneBtn.hidden = true;
     }
+    $("nowLink").hidden = true;
     $("nowNext").textContent = next ? `Up next: ${next.name} at ${fmtTime(next.time)}` : "";
   }
 
@@ -621,6 +627,18 @@
   const soundLabel = () => ($("soundBtn").textContent = window.DaybreakSound && window.DaybreakSound.enabled ? "Sounds on" : "Sounds off");
   $("soundBtn").addEventListener("click", () => { window.DaybreakSound.set(!window.DaybreakSound.enabled); soundLabel(); });
   soundLabel();
+
+  // ---------- tabs ----------
+  function goTab(name, scroll = true) {
+    document.body.dataset.active = name;
+    document.querySelectorAll(".tabbar button").forEach((b) => b.classList.toggle("on", b.dataset.go === name));
+    try { sessionStorage.setItem("daybreak-tab", name); } catch { /* ignore */ }
+    if (scroll) window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+  document.querySelectorAll(".tabbar button").forEach((b) => b.addEventListener("click", () => goTab(b.dataset.go)));
+  let startTab = "today";
+  try { startTab = sessionStorage.getItem("daybreak-tab") || "today"; } catch { /* ignore */ }
+  goTab(startTab, false);
 
   async function boot() {
     if (!state.firstDay) { state.firstDay = todayKey(); save(); }

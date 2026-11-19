@@ -17,7 +17,7 @@
       "offset": 0,
       "name": "Out of bed",
       "push": "Feet on the floor. Don't negotiate with the bed. Open Daybreak.",
-      "priority": "high",
+      "priority": "max",
       "icon": "sun"
     },
     {

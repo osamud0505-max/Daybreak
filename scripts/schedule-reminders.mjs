@@ -46,7 +46,7 @@ for (const t of globalThis.DaybreakSchedule.tasksFor(routine, dateKey)) {
     At: String(Math.floor(at / 1000)),
     Click: appUrl,
     Tags: "sunrise",
-    Priority: t.priority === "high" ? "high" : "default",
+    Priority: ["max", "high"].includes(t.priority) ? t.priority : "default",
   };
   if (dryRun) {
     console.log(`[dry run] ${new Date(at).toLocaleString("en-CA", { timeZone: tz })}  ${t.name}: ${t.push}`);

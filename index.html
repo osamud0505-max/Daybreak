@@ -17,7 +17,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=12">
+  <link rel="stylesheet" href="style.css?v=13">
 </head>
 <body>
   <div class="sky" id="sky" aria-hidden="true">
@@ -37,18 +37,19 @@
       </div>
     </header>
 
-    <p class="banner" id="banner" hidden></p>
+    <p class="banner" id="banner" data-tab="today" hidden></p>
 
-    <section class="card now" id="now" aria-live="polite">
+    <section class="card now" id="now" data-tab="today" aria-live="polite">
       <span class="now-emoji" id="nowEmoji"></span>
       <p class="label" id="nowLabel">Right now</p>
       <p class="now-task" id="nowTask"></p>
       <p class="now-sub" id="nowSub"></p>
       <button class="btn big" id="nowDone" type="button">Done</button>
+      <button class="link now-link" id="nowLink" type="button" hidden></button>
       <p class="now-next" id="nowNext"></p>
     </section>
 
-    <section class="card sleep" id="sleep" hidden>
+    <section class="card sleep" id="sleep" data-tab="me" hidden>
       <div class="sleep-row">
         <div><p class="label"><span class="emo" data-icon="sun"></span>Wake</p><p class="sleep-time" id="sleepWake"></p></div>
         <div><p class="label"><span class="emo" data-icon="moon"></span>Lights out</p><p class="sleep-time" id="sleepOut"></p></div>
@@ -56,7 +57,7 @@
       <p class="hint" id="sleepNote"></p>
     </section>
 
-    <section class="card aligners" id="aligners" hidden>
+    <section class="card aligners" id="aligners" data-tab="me" hidden>
       <p class="label"><span class="emo" data-icon="sparkle"></span>Aligners <span class="soft" id="alRound"></span></p>
       <p class="al-big" id="alBig"></p>
       <div class="trays" id="trays" aria-hidden="true"></div>
@@ -64,7 +65,7 @@
       <button class="btn big" id="alSwitch" type="button" hidden>I switched</button>
     </section>
 
-    <section class="card intention" id="intention">
+    <section class="card intention" id="intention" data-tab="today">
       <p class="label"><span class="emo" data-icon="star"></span>Today's one thing</p>
       <form id="planForm" class="row-form">
         <input id="planInput" type="text" maxlength="90" placeholder="If I do only one thing today…" autocomplete="off">
@@ -73,7 +74,8 @@
       <button id="planText" class="plan-text" hidden></button>
     </section>
 
-    <section class="card meal" id="meal">
+    <p class="tab-intro" data-tab="meals">One healthy idea for the meal that's coming up. Tap the name for ingredients and steps.</p>
+    <section class="card meal" id="meal" data-tab="meals">
       <p class="label"><span class="emo" data-icon="pan"></span><span id="mealLabel">Tonight's dinner</span> <span class="soft" id="mealTime"></span></p>
       <button class="meal-name" id="mealName" type="button" aria-expanded="false"></button>
       <p class="hint al-meal" id="alMeal" hidden>Aligners out first. Brush, then back in within 30 minutes.</p>
@@ -89,7 +91,8 @@
       </div>
     </section>
 
-    <section class="card meal" id="move" hidden>
+    <p class="tab-intro" data-tab="move">Today's movement. Tap the name to see each step.</p>
+    <section class="card meal" id="move" data-tab="move" hidden>
       <p class="label"><span class="emo" data-icon="sprout"></span><span id="moveLabel">Movement</span> <span class="soft" id="moveTime"></span></p>
       <button class="meal-name" id="moveName" type="button" aria-expanded="false"></button>
       <div class="meal-body" id="moveBody" hidden>
@@ -101,7 +104,7 @@
       </div>
     </section>
 
-    <section class="card cycle" id="cycle">
+    <section class="card cycle" id="cycle" data-tab="me">
       <p class="label"><span class="emo" data-icon="flower"></span>Cycle</p>
       <p class="cycle-big" id="cycleBig"></p>
       <p class="hint" id="cycleSub"></p>
@@ -118,9 +121,9 @@
       <p class="hint" id="cycleEditHint" hidden>Tap days in "Last 4 weeks" below to mark or unmark period days. Tap Done when finished.</p>
     </section>
 
-    <section id="routine"></section>
+    <section id="routine" data-tab="today"></section>
 
-    <section class="card focus">
+    <section class="card focus" data-tab="me">
       <p class="label"><span class="emo" data-icon="cloud"></span>No-phone time <span id="focusTotal" class="soft"></span></p>
       <div id="focusIdle" class="picks">
         <button class="btn soft-btn" data-min="30" type="button">30 min</button>
@@ -134,7 +137,7 @@
       </div>
     </section>
 
-    <section class="card evening" id="evening">
+    <section class="card evening" id="evening" data-tab="today">
       <p class="label"><span class="emo" data-icon="heart"></span>Evening check-in</p>
       <div id="eveningBody">
         <label for="well">What went well?</label>
@@ -147,12 +150,12 @@
       <button class="link" id="eveningEarly" type="button" hidden>Opens at 5 PM. Open now</button>
     </section>
 
-    <section>
+    <section data-tab="me">
       <div class="section-head"><h2><span class="emo" data-icon="daisy"></span>Last 4 weeks</h2></div>
       <div class="month" id="month" aria-label="Days by how much of the routine was done"></div>
     </section>
 
-    <details class="card setup">
+    <details class="card setup" data-tab="me">
       <summary class="label"><span class="emo" data-icon="bell"></span>Reminders on your phone</summary>
       <ol class="setup-steps">
         <li>Install the free <strong>ntfy</strong> app from the Play Store.</li>
@@ -164,7 +167,7 @@
       <p class="hint">Keep this topic private. Anyone who has it can see your reminders.</p>
     </details>
 
-    <footer class="foot">
+    <footer class="foot" data-tab="me">
       <p>Saved only on this phone. Tick it, then put the phone down.</p>
       <button class="link sound-btn" id="soundBtn" type="button">Sounds on</button>
       <button class="link" id="exportBtn" type="button">Back up my data</button>
@@ -173,11 +176,18 @@
     </footer>
   </main>
 
-  <script src="icons.js?v=12"></script>
-  <script src="sound.js?v=12"></script>
-  <script src="schedule.js?v=12"></script>
-  <script src="app.js?v=12"></script>
-  <script src="sky.js?v=12"></script>
-  <script src="fairy.js?v=12"></script>
+  <nav class="tabbar" aria-label="Sections">
+    <button type="button" data-go="today"><span data-icon="sun"></span>Today</button>
+    <button type="button" data-go="meals"><span data-icon="pot"></span>Meals</button>
+    <button type="button" data-go="move"><span data-icon="sprout"></span>Move</button>
+    <button type="button" data-go="me"><span data-icon="heart"></span>Me</button>
+  </nav>
+
+  <script src="icons.js?v=13"></script>
+  <script src="sound.js?v=13"></script>
+  <script src="schedule.js?v=13"></script>
+  <script src="app.js?v=13"></script>
+  <script src="sky.js?v=13"></script>
+  <script src="fairy.js?v=13"></script>
 </body>
 </html>

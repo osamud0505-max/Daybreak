@@ -761,4 +761,53 @@ body[data-period="night"] .hill-flower .petal, body[data-period="dusk"] .hill-fl
   body::before, .card, .habit.done::before, .hill-flower, .hill-flower .petal { animation: none !important; }
 }
 
+/* ---------- tabs ---------- */
+body[data-active="today"] [data-tab]:not([data-tab="today"]),
+body[data-active="meals"] [data-tab]:not([data-tab="meals"]),
+body[data-active="move"]  [data-tab]:not([data-tab="move"]),
+body[data-active="me"]    [data-tab]:not([data-tab="me"]) { display: none !important; }
+.wrap { padding-bottom: calc(110px + env(safe-area-inset-bottom)); }
+.tab-intro { margin: 0 6px; color: var(--ink-soft); font-weight: 700; font-size: 0.95rem; }
+.tabbar {
+  position: fixed;
+  z-index: 20;
+  left: 50%;
+  bottom: calc(12px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  width: min(430px, calc(100% - 24px));
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  padding: 6px;
+  border-radius: 26px;
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 2px solid color-mix(in srgb, var(--lilac) 80%, var(--surface));
+  box-shadow: 0 10px 30px rgba(139, 106, 214, .22);
+}
+.tabbar button {
+  font-family: var(--round);
+  font-weight: 600;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  background: none;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 0 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  transition: background .3s, color .3s, transform .15s;
+}
+.tabbar button span { font-size: 1.35rem; display: inline-flex; }
+.tabbar button:active { transform: scale(.94); }
+.tabbar button.on { background: color-mix(in srgb, var(--lilac) 85%, var(--surface)); color: var(--primary); }
+.now-link { display: block; margin-top: 8px; }
+/* on the smaller tabs, keep the header compact */
+body:not([data-active="today"]) .top { padding-bottom: 16px; }
+body:not([data-active="today"]) .progress { display: none; }
+
 [hidden] { display: none !important; }
