@@ -1,9 +1,12 @@
 // Offline support: cache the app shell, serve it network-first so updates arrive.
-const CACHE = "daybreak-v37";
+const CACHE = "daybreak-v38";
 const SHELL = ["./", "index.html", "style.css", "app.js", "routine.json", "recipes.json", "workouts.json", "schedule.js", "icons.js", "sound.js", "sky.js", "fairy.js", "ambient.js", "notify.js", "manifest.webmanifest", "icons/favicon-64.png", "icons/icon-maskable-512.png", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png", "icons/badge-96.png"];
 
 self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));
+  // Cache each file on its own, so one flaky download can't stop the app from installing.
+  e.waitUntil(caches.open(CACHE)
+    .then((c) => Promise.allSettled(SHELL.map((f) => c.add(f))))
+    .then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", (e) => {
