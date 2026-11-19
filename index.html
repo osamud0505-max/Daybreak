@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Daybreak</title>
   <meta name="description" content="A quiet daily discipline log.">
-  <meta name="theme-color" content="#e9efe9" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#1b2421" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#d6eaff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#2f2752" media="(prefers-color-scheme: dark)">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -16,12 +16,14 @@
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="sky" id="sky" aria-hidden="true">
-    <div class="orb" id="orb"></div>
+    <div class="stars"><i style="top:30px;left:12%"></i><i style="top:70px;left:28%;animation-delay:-1s"></i><i style="top:22px;left:52%;animation-delay:-2s"></i><i style="top:95px;left:70%;animation-delay:-.5s"></i><i style="top:45px;left:88%;animation-delay:-1.5s"></i></div>
+    <div class="cloud c1"></div><div class="cloud c2"></div>
+    <div class="orb" id="orb"><span class="face"><i></i><i></i><b></b></span></div>
     <svg class="hills" viewBox="0 0 400 80" preserveAspectRatio="none">
       <path class="hill-back" d="M0 50 C 80 20, 160 30, 230 45 S 360 30, 400 38 L400 80 L0 80 Z"/>
       <path class="hill-front" d="M0 62 C 90 44, 170 58, 250 54 S 350 46, 400 58 L400 80 L0 80 Z"/>
@@ -41,6 +43,7 @@
     <p class="banner" id="banner" hidden></p>
 
     <section class="card now" id="now" aria-live="polite">
+      <span class="now-emoji" id="nowEmoji">🌤️</span>
       <p class="label" id="nowLabel">Right now</p>
       <p class="now-task" id="nowTask"></p>
       <p class="now-sub" id="nowSub"></p>
@@ -50,14 +53,14 @@
 
     <section class="card sleep" id="sleep" hidden>
       <div class="sleep-row">
-        <div><p class="label">Wake</p><p class="sleep-time" id="sleepWake"></p></div>
-        <div><p class="label">Lights out</p><p class="sleep-time" id="sleepOut"></p></div>
+        <div><p class="label"><span class="emo">☀️</span>Wake</p><p class="sleep-time" id="sleepWake"></p></div>
+        <div><p class="label"><span class="emo">🌙</span>Lights out</p><p class="sleep-time" id="sleepOut"></p></div>
       </div>
       <p class="hint" id="sleepNote"></p>
     </section>
 
     <section class="card intention" id="intention">
-      <p class="label">Today's one thing</p>
+      <p class="label"><span class="emo">⭐</span>Today's one thing</p>
       <form id="planForm" class="row-form">
         <input id="planInput" type="text" maxlength="90" placeholder="If I do only one thing today…" autocomplete="off">
         <button type="submit" class="btn">Set</button>
@@ -66,7 +69,7 @@
     </section>
 
     <section class="card meal" id="meal">
-      <p class="label"><span id="mealLabel">Tonight's dinner</span> <span class="soft" id="mealTime"></span></p>
+      <p class="label"><span class="emo">🍳</span><span id="mealLabel">Tonight's dinner</span> <span class="soft" id="mealTime"></span></p>
       <button class="meal-name" id="mealName" type="button" aria-expanded="false"></button>
       <div class="meal-body" id="mealBody" hidden>
         <p class="meal-h">You need</p>
@@ -81,7 +84,7 @@
     </section>
 
     <section class="card meal" id="move" hidden>
-      <p class="label"><span id="moveLabel">Movement</span> <span class="soft" id="moveTime"></span></p>
+      <p class="label"><span class="emo">🌱</span><span id="moveLabel">Movement</span> <span class="soft" id="moveTime"></span></p>
       <button class="meal-name" id="moveName" type="button" aria-expanded="false"></button>
       <div class="meal-body" id="moveBody" hidden>
         <ol id="moveSteps"></ol>
@@ -94,7 +97,7 @@
     <section id="routine"></section>
 
     <section class="card focus">
-      <p class="label">No-phone time <span id="focusTotal" class="soft"></span></p>
+      <p class="label"><span class="emo">☁️</span>No-phone time <span id="focusTotal" class="soft"></span></p>
       <div id="focusIdle" class="picks">
         <button class="btn soft-btn" data-min="30" type="button">30 min</button>
         <button class="btn soft-btn" data-min="60" type="button">60 min</button>
@@ -108,7 +111,7 @@
     </section>
 
     <section class="card evening" id="evening">
-      <p class="label">Evening check-in</p>
+      <p class="label"><span class="emo">💜</span>Evening check-in</p>
       <div id="eveningBody">
         <label for="well">What went well?</label>
         <textarea id="well" rows="2"></textarea>
@@ -121,12 +124,12 @@
     </section>
 
     <section>
-      <div class="section-head"><h2>Last 4 weeks</h2></div>
+      <div class="section-head"><h2>🌸 Last 4 weeks</h2></div>
       <div class="month" id="month" aria-label="Days by how much of the routine was done"></div>
     </section>
 
     <details class="card setup">
-      <summary class="label">Reminders on your phone</summary>
+      <summary class="label"><span class="emo">🔔</span>Reminders on your phone</summary>
       <ol class="setup-steps">
         <li>Install the free <strong>ntfy</strong> app from the Play Store.</li>
         <li>Open it, tap <strong>+</strong>, and paste this topic:
@@ -138,7 +141,7 @@
     </details>
 
     <footer class="foot">
-      <p>Saved only on this phone. Tick it, then put the phone down.</p>
+      <p>Saved only on this phone. Tick it, then put the phone down 💛</p>
       <button class="link" id="exportBtn" type="button">Back up my data</button>
       <label class="link" for="importFile">Restore a backup</label>
       <input id="importFile" type="file" accept="application/json" hidden>

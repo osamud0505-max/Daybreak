@@ -17,98 +17,113 @@
       "offset": 0,
       "name": "Out of bed",
       "push": "Feet on the floor. Don't negotiate with the bed. Open Daybreak.",
-      "priority": "high"
+      "priority": "high",
+      "icon": "🌤️"
     },
     {
       "id": "teeth-am",
       "anchor": "wake",
       "offset": 5,
-      "name": "Brush teeth"
+      "name": "Brush teeth",
+      "icon": "🪥"
     },
     {
       "id": "face-am",
       "anchor": "wake",
       "offset": 5,
       "name": "Wash face",
-      "push": "Brush teeth, wash face, cold water. Two minutes."
+      "push": "Brush teeth, wash face, cold water. Two minutes.",
+      "icon": "🫧"
     },
     {
       "id": "bed",
       "anchor": "wake",
       "offset": 10,
       "name": "Make the bed",
-      "push": "Make the bed. Once it's made, you can't crawl back in."
+      "push": "Make the bed. Once it's made, you can't crawl back in.",
+      "icon": "🛏️"
     },
     {
       "id": "stretch-am",
       "anchor": "wake",
       "offset": 15,
       "name": "Morning stretch (10 min)",
-      "push": "10-minute morning stretch. Today's flow is in Daybreak."
+      "push": "10-minute morning stretch. Today's flow is in Daybreak.",
+      "icon": "🧘"
     },
     {
       "id": "walk-am",
       "anchor": "wake",
       "offset": 25,
       "name": "Morning walk (15 min)",
-      "push": "Morning walk, 15 minutes outside. Daylight in your eyes resets your body clock, so waking early gets easier."
+      "push": "Morning walk, 15 minutes outside. Daylight in your eyes resets your body clock, so waking early gets easier.",
+      "icon": "🚶"
     },
     {
       "id": "breakfast",
       "anchor": "wake",
       "offset": 45,
       "name": "Real breakfast",
-      "push": "Breakfast. Daybreak has a recipe ready for you."
+      "push": "Breakfast. Daybreak has a recipe ready for you.",
+      "icon": "🥣"
     },
     {
       "id": "plan",
       "anchor": "wake",
       "offset": 65,
       "name": "Set today's one thing",
-      "push": "What's the one thing that makes today a win? Write it down."
+      "push": "What's the one thing that makes today a win? Write it down.",
+      "icon": "⭐"
     },
     {
       "id": "school",
       "anchor": "wake",
       "offset": 75,
       "name": "School work",
-      "push": "School block. Phone in another room, start with the smallest task."
+      "push": "School block. Phone in another room, start with the smallest task.",
+      "icon": "📚"
     },
     {
       "id": "lunch",
       "time": "13:30",
       "name": "Lunch",
-      "push": "Lunch time. Eat something real, not just a snack."
+      "push": "Lunch time. Eat something real, not just a snack.",
+      "icon": "🥗"
     },
     {
       "id": "tesol",
       "time": "14:30",
       "name": "TESOL course",
-      "push": "TESOL time. Even 25 minutes counts. Start now."
+      "push": "TESOL time. Even 25 minutes counts. Start now.",
+      "icon": "🍎"
     },
     {
       "id": "walk",
       "time": "15:45",
       "name": "Afternoon walk",
-      "push": "Walk before the sun goes down. Shoes on, out the door, 20 minutes."
+      "push": "Walk before the sun goes down. Shoes on, out the door, 20 minutes.",
+      "icon": "🍂"
     },
     {
       "id": "dinner",
       "time": "18:00",
       "name": "Cook dinner",
-      "push": "Cook tonight. Tonight's recipe is in Daybreak."
+      "push": "Cook tonight. Tonight's recipe is in Daybreak.",
+      "icon": "🍲"
     },
     {
       "id": "read",
       "time": "19:30",
       "name": "Read",
-      "push": "Read 15 pages. Paper, not phone."
+      "push": "Read 15 pages. Paper, not phone.",
+      "icon": "📖"
     },
     {
       "id": "write",
       "time": "20:00",
       "name": "Write",
-      "push": "Write a few lines. Anything counts."
+      "push": "Write a few lines. Anything counts.",
+      "icon": "✏️"
     },
     {
       "id": "gym",
@@ -122,7 +137,8 @@
         4
       ],
       "push": "Gym. Pack the bag and go. Tonight's plan is in Daybreak.",
-      "priority": "high"
+      "priority": "high",
+      "icon": "🏋️"
     },
     {
       "id": "stretch",
@@ -133,34 +149,39 @@
       ],
       "push": "No gym tonight. 20 minutes of stretching and light exercise before bed. Tonight's routine is in Daybreak.",
       "anchor": "lightsOut",
-      "offset": -85
+      "offset": -85,
+      "icon": "🌙"
     },
     {
       "id": "room",
       "anchor": "lightsOut",
       "offset": -50,
       "name": "Shower + 10-minute room reset",
-      "push": "Shower, then a 10-minute room reset. Clothes, dishes, desk."
+      "push": "Shower, then a 10-minute room reset. Clothes, dishes, desk.",
+      "icon": "🛁"
     },
     {
       "id": "teeth-pm",
       "anchor": "lightsOut",
       "offset": -20,
-      "name": "Brush teeth"
+      "name": "Brush teeth",
+      "icon": "🪥"
     },
     {
       "id": "face-pm",
       "anchor": "lightsOut",
       "offset": -20,
       "name": "Wash face",
-      "push": "Brush teeth, wash face. Winding down."
+      "push": "Brush teeth, wash face. Winding down.",
+      "icon": "🫧"
     },
     {
       "id": "tomorrow",
       "anchor": "lightsOut",
       "offset": -10,
       "name": "Check-in + tomorrow's one thing",
-      "push": "Evening check-in, then pick tomorrow's one thing."
+      "push": "Evening check-in, then pick tomorrow's one thing.",
+      "icon": "💭"
     },
     {
       "id": "phone-away",
@@ -168,7 +189,8 @@
       "offset": 0,
       "name": "Phone away, lights out",
       "push": "Phone across the room, alarm across the room too. Lights out.",
-      "priority": "high"
+      "priority": "high",
+      "icon": "📵"
     }
   ]
 }

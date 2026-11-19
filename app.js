@@ -69,11 +69,29 @@
     return isDone(t.id, keyOf(d));
   }
 
+  let justDone = null;
   function toggle(id) {
     const d = day(todayKey());
-    d.done = d.done.includes(id) ? d.done.filter((x) => x !== id) : [...d.done, id];
-    if (navigator.vibrate) navigator.vibrate(8);
+    const adding = !d.done.includes(id);
+    d.done = adding ? [...d.done, id] : d.done.filter((x) => x !== id);
+    if (navigator.vibrate) navigator.vibrate(adding ? [8, 40, 8] : 8);
+    justDone = adding ? id : null;
     save(); renderAll();
+    justDone = null;
+  }
+  const SPARKS = ["✨", "💖", "⭐", "🌸", "💫", "🫧"];
+  function sparkle(target) {
+    const r = target.getBoundingClientRect();
+    for (let i = 0; i < 7; i++) {
+      const a = (Math.PI * 2 * i) / 7 + Math.random() * 0.5;
+      const s = el("span", { className: "sparkle", textContent: SPARKS[(Math.random() * SPARKS.length) | 0] });
+      s.style.left = `${r.left + r.width / 2 - 7 + window.scrollX}px`;
+      s.style.top = `${r.top + r.height / 2 - 9 + window.scrollY}px`;
+      s.style.setProperty("--dx", `${Math.cos(a) * 34}px`);
+      s.style.setProperty("--dy", `${Math.sin(a) * 34}px`);
+      document.body.append(s);
+      setTimeout(() => s.remove(), 750);
+    }
   }
 
   // ---------- helpers ----------
@@ -131,12 +149,13 @@
       const late = n - current.min;
       $("nowLabel").textContent = late > 30 ? "Overdue" : "Right now";
       $("nowTask").textContent = current.name;
+      $("nowEmoji").textContent = current.icon || "🌤️";
       const earlier = due.length - 1;
       $("nowSub").textContent =
         (late > 30 ? `Was due at ${fmtTime(current.time)}. Do it now, small is fine.` : `Due ${fmtTime(current.time)}.`) +
         (earlier ? ` ${earlier} earlier ${earlier === 1 ? "task is" : "tasks are"} still open.` : "");
       doneBtn.hidden = false;
-      doneBtn.onclick = () => toggle(current.id);
+      doneBtn.onclick = () => { sparkle(doneBtn); toggle(current.id); };
     } else if (!tasks.length) {
       $("nowLabel").textContent = "Right now";
       $("nowTask").textContent = "Loading your routine…";
@@ -145,11 +164,13 @@
     } else if (next) {
       const first = tasks[0].min;
       $("nowLabel").textContent = n < first ? "Sleep" : "On track";
+      $("nowEmoji").textContent = n < first ? "😴" : "🌈";
       $("nowTask").textContent = n < first ? "Your day starts later." : "Nothing overdue.";
       $("nowSub").textContent = n < first ? "Put the phone down and rest." : "Use the gap well, or start the next thing early.";
       doneBtn.hidden = true;
     } else {
       $("nowLabel").textContent = "Done";
+      $("nowEmoji").textContent = "🌙";
       $("nowTask").textContent = "That's the whole day.";
       $("nowSub").textContent = "Phone across the room. Lights out.";
       doneBtn.hidden = true;
@@ -216,7 +237,7 @@
   });
   $("mealMade").addEventListener("click", () => {
     const id = MEAL_TASK[mealNow()];
-    if (!isDone(id, todayKey())) toggle(id);
+    if (!isDone(id, todayKey())) { sparkle($("mealMade")); toggle(id); }
   });
 
   // ---------- movement ----------
@@ -242,7 +263,7 @@
     const done = isDone(c.task, todayKey());
     $("moveDone").textContent = done ? "Done ✓" : "Done";
     $("moveDone").disabled = done;
-    $("moveDone").onclick = () => { if (!isDone(c.task, todayKey())) toggle(c.task); };
+    $("moveDone").onclick = () => { if (!isDone(c.task, todayKey())) { sparkle($("moveDone")); toggle(c.task); } };
   }
   $("moveName").addEventListener("click", () => {
     const open = $("moveBody").hidden;
@@ -279,9 +300,11 @@
     const nowBlock = blockOf({ min: n });
     Object.entries(blocks).forEach(([name, list]) => {
       const doneN = list.filter((t) => isDone(t.id, tk)).length;
+      const BLOCK_EMO = { Morning: "🌅", Day: "🌼", Evening: "🌷", Night: "🌙" };
+      const h2 = el("h2", {}, el("span", { className: "emo", textContent: BLOCK_EMO[name] }), name);
       const head = el("summary", { className: "section-head" },
-        el("h2", { textContent: name }),
-        el("span", { className: "soft small", textContent: `${doneN} / ${list.length}${doneN === list.length ? " ✓" : ""}` }));
+        h2,
+        el("span", { className: "pill", textContent: `${doneN} / ${list.length}${doneN === list.length ? " 🎉" : ""}` }));
       const ul = el("ul", { className: "habits" });
       list.forEach((t) => {
         const done = isDone(t.id, tk);
@@ -292,6 +315,7 @@
         const check = el("span", { className: "check", innerHTML: CHECK_SVG });
         const nameRow = el("span", { className: "habit-name" },
           el("span", { className: "time", textContent: fmtTime(t.time) }), t.name);
+        const icon = el("span", { className: "task-emo", textContent: t.icon || "•" });
         const dots = el("span", { className: "week" });
         week.forEach((d) => {
           const k = keyOf(d);
@@ -300,13 +324,15 @@
         });
         const main = el("span", { className: "habit-main" }, nameRow, dots);
         if (!done && missedYesterday(t)) main.append(el("span", { className: "nmt", textContent: "Never miss twice" }));
-        const st = el("span", { className: `streak${s ? " on" : ""}`, innerHTML: `${LEAF_SVG}${s}` });
+        const st = el("span", { className: `streak${s ? " on" : ""}`, textContent: s ? `🔥${s}` : "" });
         st.title = `${s} day streak`;
-        btn.append(check, main, st);
+        btn.append(icon, main, el("span", { className: "right" }, check, st));
+        if (justDone === t.id) { btn.classList.add("pop"); requestAnimationFrame(() => sparkle(check)); }
         btn.addEventListener("click", () => toggle(t.id));
         ul.append(el("li", {}, btn));
       });
       const block = el("details", { className: "block" }, head, ul);
+      block.dataset.block = name;
       const remembered = openBlocks[name];
       block.open = remembered !== undefined ? remembered : name === nowBlock;
       block.addEventListener("toggle", () => { openBlocks[name] = block.open; });
@@ -386,8 +412,9 @@
       const pct = Math.round((n / total) * 85);
       const cell = el("div", { className: `d${k === tk ? " today" : ""}`, textContent: d.getDate() });
       if (n) {
-        cell.style.background = `color-mix(in srgb, var(--sage) ${pct}%, transparent)`;
-        if (pct > 50) cell.style.color = "var(--bg)";
+        cell.style.background = `color-mix(in srgb, var(--done) ${pct}%, var(--surface))`;
+        cell.style.color = "var(--ink)";
+        if (n === total) cell.textContent = "🌸";
       }
       cell.title = `${k}: ${n} of ${total}`;
       m.append(cell);
