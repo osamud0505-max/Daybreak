@@ -115,7 +115,7 @@
       { dawn: "Good morning", day: "Good day", dusk: "Good evening", night: "Rest well" }[period];
     const t = Math.min(1, Math.max(0, (h + new Date().getMinutes() / 60 - 5) / 16));
     const orb = $("orb");
-    orb.style.right = `${6 + t * 26}%`;
+    orb.style.right = `${5 + t * 8}%`;
     orb.style.top = `${2 + Math.pow(2 * t - 1, 2) * 26}px`;
   }
 
@@ -292,6 +292,40 @@
     $("sleepNote").textContent = reached
       ? "You've reached your target. Keep it steady, weekends too."
       : `Moving 15 min earlier every 3 days. ${fmtTime(routine.sleep.targetWake)} by ${by}.`;
+  }
+
+  // ---------- aligners ----------
+  function renderAligners() {
+    const al = routine && S.alignerFor(routine, todayKey());
+    $("aligners").hidden = !al;
+    $("alMeal").hidden = !al || al.finished;
+    if (!al) return;
+    const ends = new Date(al.finalDay + "T12:00:00").toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+    const trays = $("trays");
+    trays.replaceChildren(...Array.from({ length: al.total }, (_, i) =>
+      el("i", { className: i + 1 < al.tray || al.finished ? "past" : i + 1 === al.tray ? "now" : "" })));
+    $("alSwitch").hidden = true;
+    if (al.finished) {
+      $("alRound").textContent = "";
+      $("alBig").textContent = `All ${al.total} trays done`;
+      $("alSub").textContent = "Wear your retainers as your orthodontist told you.";
+      return;
+    }
+    $("alRound").textContent = `· round ${al.round} of ${al.rounds}`;
+    $("alBig").textContent = `Tray ${al.tray} of ${al.total}`;
+    if (al.changeTonight) {
+      const switched = isDone("aligner-change", todayKey());
+      $("alSub").textContent = switched
+        ? `Switched. Tray ${al.next} starts tomorrow. It may feel tight for a day or two, that's normal.`
+        : `Tonight's the switch. Brush, then put in tray ${al.next} before bed. Keep tray ${al.tray} in its case.`;
+      $("alSwitch").hidden = switched;
+      $("alSwitch").textContent = `I switched to tray ${al.next}`;
+      $("alSwitch").onclick = () => { sparkle($("alSwitch")); toggle("aligner-change"); };
+    } else {
+      const d = al.daysLeft;
+      $("alSub").textContent = `Day ${al.dayOfTray} of ${al.daysPerTray}. Switch to tray ${al.next} ${d === 1 ? "tomorrow night" : `in ${d} days, Friday night`}. ` +
+        `Wear them ${al.wearHours} hours a day. Last tray ends ${ends}.`;
+    }
   }
 
   // ---------- cycle (stays on this phone only; never sent in reminders) ----------
@@ -541,7 +575,7 @@
   // ---------- go ----------
   function renderAll() {
     renderSky(); renderHeader(); renderNow(); renderSleep(); renderPlan(); renderMeal(); renderMove();
-    renderCycle(); renderRoutine(); renderFocus(); renderEvening(); renderMonth();
+    renderAligners(); renderCycle(); renderRoutine(); renderFocus(); renderEvening(); renderMonth();
   }
 
   document.querySelectorAll("[data-icon]").forEach((n) => (n.innerHTML = I(n.dataset.icon)));
@@ -566,7 +600,7 @@
   let lastDay = todayKey();
   const refresh = () => {
     if (todayKey() !== lastDay) { lastDay = todayKey(); eveningOpened = false; loadTasks(); }
-    renderSky(); renderHeader(); renderNow(); renderSleep(); renderMeal(); renderMove(); renderRoutine();
+    renderSky(); renderHeader(); renderNow(); renderSleep(); renderAligners(); renderMeal(); renderMove(); renderRoutine();
   };
   document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") refresh(); });
   setInterval(() => { if (document.visibilityState === "visible") refresh(); }, 60000);

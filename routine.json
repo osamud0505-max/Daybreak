@@ -64,7 +64,7 @@
       "anchor": "wake",
       "offset": 45,
       "name": "Real breakfast",
-      "push": "Breakfast. Daybreak has a recipe ready for you.",
+      "push": "Breakfast. Daybreak has a recipe ready for you. Aligners out, then brush and put them back in within 30 minutes.",
       "icon": "bowl"
     },
     {
@@ -87,7 +87,7 @@
       "id": "lunch",
       "time": "13:30",
       "name": "Lunch",
-      "push": "Lunch time. Eat something real, not just a snack.",
+      "push": "Lunch time. Eat something real, not just a snack. Aligners out, then brush and put them back in within 30 minutes.",
       "icon": "leaf"
     },
     {
@@ -108,7 +108,7 @@
       "id": "dinner",
       "time": "18:00",
       "name": "Cook dinner",
-      "push": "Cook tonight. Tonight's recipe is in Daybreak.",
+      "push": "Cook tonight. Tonight's recipe is in Daybreak. Aligners out, then brush and put them back in within 30 minutes.",
       "icon": "pot"
     },
     {
@@ -184,6 +184,16 @@
       "icon": "thought"
     },
     {
+      "id": "aligner-change",
+      "anchor": "lightsOut",
+      "offset": -25,
+      "aligner": true,
+      "icon": "sparkle",
+      "name": "Switch to tray {next}",
+      "push": "Tray change tonight. Switch to tray {next} of {total} after brushing. Pop tray {tray} in its case.",
+      "priority": "high"
+    },
+    {
       "id": "phone-away",
       "anchor": "lightsOut",
       "offset": 0,
@@ -192,5 +202,13 @@
       "priority": "high",
       "icon": "phoneoff"
     }
-  ]
+  ],
+  "aligners": {
+    "firstDay": "2026-09-05",
+    "note": "Tray 1 went in Fri Sep 4 (one extra day). Every change is Friday night before bed, so each tray counts from Saturday.",
+    "daysPerTray": 7,
+    "totalTrays": 28,
+    "traysPerRound": 2,
+    "wearHours": 22
+  }
 }

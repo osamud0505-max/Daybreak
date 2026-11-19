@@ -59,6 +59,14 @@
       <p class="hint" id="sleepNote"></p>
     </section>
 
+    <section class="card aligners" id="aligners" hidden>
+      <p class="label"><span class="emo" data-icon="sparkle"></span>Aligners <span class="soft" id="alRound"></span></p>
+      <p class="al-big" id="alBig"></p>
+      <div class="trays" id="trays" aria-hidden="true"></div>
+      <p class="hint" id="alSub"></p>
+      <button class="btn big" id="alSwitch" type="button" hidden>I switched</button>
+    </section>
+
     <section class="card intention" id="intention">
       <p class="label"><span class="emo" data-icon="star"></span>Today's one thing</p>
       <form id="planForm" class="row-form">
@@ -71,6 +79,7 @@
     <section class="card meal" id="meal">
       <p class="label"><span class="emo" data-icon="pan"></span><span id="mealLabel">Tonight's dinner</span> <span class="soft" id="mealTime"></span></p>
       <button class="meal-name" id="mealName" type="button" aria-expanded="false"></button>
+      <p class="hint al-meal" id="alMeal" hidden>Aligners out first. Brush, then back in within 30 minutes.</p>
       <div class="meal-body" id="mealBody" hidden>
         <p class="meal-h">You need</p>
         <ul id="mealIngredients"></ul>
