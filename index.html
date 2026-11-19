@@ -21,9 +21,6 @@
 </head>
 <body>
   <div class="sky" id="sky" aria-hidden="true">
-    <div class="stars"><i style="top:30px;left:12%"></i><i style="top:70px;left:28%;animation-delay:-1s"></i><i style="top:22px;left:52%;animation-delay:-2s"></i><i style="top:95px;left:70%;animation-delay:-.5s"></i><i style="top:45px;left:88%;animation-delay:-1.5s"></i></div>
-    <div class="cloud c1"></div><div class="cloud c2"></div>
-    <div class="orb" id="orb"><span class="face"><i></i><i></i><b></b></span></div>
     <svg class="hills" viewBox="0 0 400 80" preserveAspectRatio="none">
       <path class="hill-back" d="M0 50 C 80 20, 160 30, 230 45 S 360 30, 400 38 L400 80 L0 80 Z"/>
       <path class="hill-front" d="M0 62 C 90 44, 170 58, 250 54 S 350 46, 400 58 L400 80 L0 80 Z"/>
@@ -169,6 +166,7 @@
 
     <footer class="foot">
       <p>Saved only on this phone. Tick it, then put the phone down.</p>
+      <button class="link sound-btn" id="soundBtn" type="button">Sounds on</button>
       <button class="link" id="exportBtn" type="button">Back up my data</button>
       <label class="link" for="importFile">Restore a backup</label>
       <input id="importFile" type="file" accept="application/json" hidden>
@@ -176,7 +174,9 @@
   </main>
 
   <script src="icons.js"></script>
+  <script src="sound.js"></script>
   <script src="schedule.js"></script>
   <script src="app.js"></script>
+  <script src="sky.js"></script>
 </body>
 </html>

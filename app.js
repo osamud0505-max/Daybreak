@@ -76,9 +76,37 @@
     d.done = adding ? [...d.done, id] : d.done.filter((x) => x !== id);
     if (navigator.vibrate) navigator.vibrate(adding ? [8, 40, 8] : 8);
     justDone = adding ? id : null;
+    const blockBefore = blockStatus();
     save(); renderAll();
     justDone = null;
+    celebrateIfNeeded(adding, id, blockBefore);
   }
+  // Sound + celebration when a block or the whole day gets finished.
+  const sound = (n) => window.DaybreakSound && window.DaybreakSound.play(n);
+  function blockStatus() {
+    const tk = todayKey();
+    const res = {};
+    tasks.forEach((t) => { const b = blockOf(t); (res[b] ||= [0, 0]); res[b][1]++; if (isDone(t.id, tk)) res[b][0]++; });
+    return res;
+  }
+  function celebrate(text) {
+    const c = el("div", { className: "celebrate", textContent: text });
+    document.body.append(c);
+    setTimeout(() => c.remove(), 2500);
+  }
+  function celebrateIfNeeded(adding, id, before) {
+    if (!adding) { sound("undo"); return; }
+    const after = blockStatus();
+    const all = Object.values(after).every(([d, n]) => d === n);
+    const t = tasks.find((x) => x.id === id);
+    const b = t && blockOf(t);
+    if (all) { sound("all"); celebrate("The whole day, done. Proud of you."); }
+    else if (b && after[b][0] === after[b][1] && before[b] && before[b][0] < before[b][1]) {
+      sound("block");
+      celebrate({ Morning: "Morning complete", Day: "Day block complete", Evening: "Evening complete", Night: "Night routine done. Sleep well." }[b]);
+    } else sound("done");
+  }
+
   const SPARK_COLORS = ["var(--pink-deep)", "var(--lilac-deep)", "var(--butter-deep)", "var(--mint-deep)", "var(--sky-deep)", "var(--peach-deep)"];
   const I = window.DaybreakIcons.icon;
   function sparkle(target) {
@@ -113,10 +141,7 @@
     document.body.dataset.period = period;
     $("greeting").textContent =
       { dawn: "Good morning", day: "Good day", dusk: "Good evening", night: "Rest well" }[period];
-    const t = Math.min(1, Math.max(0, (h + new Date().getMinutes() / 60 - 5) / 16));
-    const orb = $("orb");
-    orb.style.right = `${5 + t * 8}%`;
-    orb.style.top = `${2 + Math.pow(2 * t - 1, 2) * 26}px`;
+    if (window.DaybreakSky) window.DaybreakSky.update();
   }
 
   function renderHeader() {
@@ -485,7 +510,7 @@
     const update = () => {
       const left = t.start + t.minutes * 60000 - Date.now();
       $("timeLeft").textContent = fmt(left);
-      if (left <= 0) stopTimer();
+      if (left <= 0) { stopTimer(); sound("all"); celebrate("No-phone time complete"); }
     };
     update();
     tick = setInterval(update, 1000);
@@ -493,6 +518,7 @@
   document.querySelectorAll("[data-min]").forEach((b) =>
     b.addEventListener("click", () => {
       state.timer = { start: Date.now(), minutes: Number(b.dataset.min) };
+      sound("start");
       save(); renderFocus();
     })
   );
@@ -579,6 +605,22 @@
   }
 
   document.querySelectorAll("[data-icon]").forEach((n) => (n.innerHTML = I(n.dataset.icon)));
+
+  // Every button gets a soft ripple; plain buttons also get a quiet tap note.
+  document.addEventListener("pointerdown", (e) => {
+    const b = e.target.closest(".btn, .chip, .link");
+    if (!b) return;
+    if (b.classList.contains("btn")) {
+      const r = b.getBoundingClientRect();
+      b.style.setProperty("--rx", `${e.clientX - r.left}px`);
+      b.style.setProperty("--ry", `${e.clientY - r.top}px`);
+      b.classList.remove("rip"); void b.offsetWidth; b.classList.add("rip");
+    }
+    if (!b.matches("#nowDone, #moveDone, #mealMade, #alSwitch")) sound("tap");
+  });
+  const soundLabel = () => ($("soundBtn").textContent = window.DaybreakSound && window.DaybreakSound.enabled ? "Sounds on" : "Sounds off");
+  $("soundBtn").addEventListener("click", () => { window.DaybreakSound.set(!window.DaybreakSound.enabled); soundLabel(); });
+  soundLabel();
 
   async function boot() {
     if (!state.firstDay) { state.firstDay = todayKey(); save(); }
