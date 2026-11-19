@@ -45,6 +45,22 @@ jobs:
           if [ -z "$id" ]; then $WRANGLER kv namespace create DAYBREAK; id=$(find_id); fi
           if [ -z "$id" ]; then echo "::error::Could not create the storage"; exit 1; fi
           sed -i "s/__KV_ID__/$id/" wrangler.toml
+      - name: Make sure the account has a workers.dev address
+        if: steps.key.outputs.ready == 'yes'
+        run: |
+          api() { curl -sS -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" -H "Content-Type: application/json" "$@"; }
+          acct="$CLOUDFLARE_ACCOUNT_ID"
+          if [ -z "$acct" ]; then acct=$(api https://api.cloudflare.com/client/v4/accounts | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>process.stdout.write((JSON.parse(s).result||[])[0]?.id||""))'); fi
+          if [ -z "$acct" ]; then echo "::error::Could not find the Cloudflare account"; exit 1; fi
+          echo "CLOUDFLARE_ACCOUNT_ID=$acct" >> "$GITHUB_ENV"
+          have=$(api "https://api.cloudflare.com/client/v4/accounts/$acct/workers/subdomain" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>process.stdout.write(JSON.parse(s).result?.subdomain||""))')
+          if [ -z "$have" ]; then
+            name="daybreak-$(openssl rand -hex 3)"
+            api -X PUT "https://api.cloudflare.com/client/v4/accounts/$acct/workers/subdomain" -d "{\"subdomain\":\"$name\"}" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{const j=JSON.parse(s);if(!j.success){console.log("::error::"+JSON.stringify(j.errors));process.exit(1)}console.log("Registered",j.result.subdomain)})'
+            sleep 10
+          else
+            echo "Already has $have.workers.dev"
+          fi
       - name: Deploy
         if: steps.key.outputs.ready == 'yes'
         working-directory: worker
