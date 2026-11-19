@@ -1,0 +1,15 @@
+name: ntfy-test
+on: push
+jobs:
+  t:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          T=dbtest-$RANDOM$RANDOM
+          echo "== OPTIONS"; curl -s -i -X OPTIONS https://ntfy.sh/$T -H 'Origin: https://example.github.io' -H 'Access-Control-Request-Method: DELETE' | grep -i 'access-control'
+          echo "== POST to seq path with query params"; curl -s -X POST "https://ntfy.sh/$T/day-wake?title=Hello%20there&in=10m&priority=high" -d "body text"; echo
+          echo "== POST to topic with sid query"; curl -s -X POST "https://ntfy.sh/$T?title=x&in=10m&sid=day-two" -d "b2"; echo
+          echo "== scheduled list"; curl -s "https://ntfy.sh/$T/json?poll=1&scheduled=1"; echo
+          echo "== delete via GET"; curl -s -i "https://ntfy.sh/$T/day-wake/delete" | head -1
+          echo "== delete via DELETE"; curl -s -i -X DELETE "https://ntfy.sh/$T/day-two" | head -1
+          echo "== scheduled list after"; curl -s "https://ntfy.sh/$T/json?poll=1&scheduled=1"; echo
