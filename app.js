@@ -1,4 +1,4 @@
-/* Daily: a quiet discipline log. Everything is stored on this device (localStorage). */
+/* Daybreak: a quiet discipline log. Everything is stored on this device (localStorage). */
 (() => {
   "use strict";
 
@@ -262,7 +262,7 @@
   // ---------- backup ----------
   $("exportBtn").addEventListener("click", () => {
     const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
-    const a = el("a", { href: URL.createObjectURL(blob), download: `daily-backup-${todayKey()}.json` });
+    const a = el("a", { href: URL.createObjectURL(blob), download: `daybreak-backup-${todayKey()}.json` });
     document.body.append(a); a.click(); a.remove();
   });
   $("importFile").addEventListener("change", async (e) => {

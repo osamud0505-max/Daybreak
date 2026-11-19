@@ -1,6 +1,6 @@
 {
-  "name": "Daily",
-  "short_name": "Daily",
+  "name": "Daybreak",
+  "short_name": "Daybreak",
   "description": "A quiet daily discipline log.",
   "start_url": "./",
   "scope": "./",

@@ -1,4 +1,4 @@
-# Daily
+# Daybreak
 
 A quiet daily discipline log for your phone. Plain HTML, CSS and JavaScript, no build step, no account.
 
