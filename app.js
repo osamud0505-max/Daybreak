@@ -616,6 +616,7 @@
       b.style.setProperty("--ry", `${e.clientY - r.top}px`);
       b.classList.remove("rip"); void b.offsetWidth; b.classList.add("rip");
     }
+    if (!b.matches("#nowDone, #moveDone, #mealMade, #alSwitch, #soundBtn, [data-min]")) sound("tap");
   });
   const soundLabel = () => ($("soundBtn").textContent = window.DaybreakSound && window.DaybreakSound.enabled ? "Sounds on" : "Sounds off");
   $("soundBtn").addEventListener("click", () => { window.DaybreakSound.set(!window.DaybreakSound.enabled); soundLabel(); });
