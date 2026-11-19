@@ -45,82 +45,119 @@
     return null;
   }
 
-  // Each "deck" is an audio element with its own smooth volume ramp.
-  function deck(src) {
-    const a = new Audio(src);
-    a.preload = "auto";
-    a.volume = 0;
-    let raf = 0;
-    const stop = () => cancelAnimationFrame(raf);
-    const ramp = (to, ms, then) => {
-      cancelAnimationFrame(raf);
-      // Chrome freezes animation frames in the background, so never rely on them there.
-      if (document.visibilityState !== "visible") { a.volume = Math.max(0, Math.min(1, to)); if (then) then(); return; }
-      const from = a.volume, t0 = performance.now();
-      const step = (t) => {
-        const k = Math.min(1, (t - t0) / ms);
-        a.volume = Math.max(0, Math.min(1, from + (to - from) * (k * k * (3 - 2 * k))));
-        if (k < 1) raf = requestAnimationFrame(step); else if (then) then();
-      };
-      raf = requestAnimationFrame(step);
-    };
-    const d = { a, ramp, stop };
-    decks.add(d);
-    return d;
+  // Music plays through Web Audio, not an <audio> element. That way Chrome treats it as
+  // app sound, not "media": no player notification, no lock-screen controls, and it can't
+  // keep going after you leave. Leaving the app suspends the whole sound engine at once.
+  let ctx = null, master = null;
+  const buffers = new Map(); // track name -> Promise<AudioBuffer>; only the current ones are kept
+  function engine() {
+    if (ctx) return ctx;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    ctx = new AC({ latencyHint: "playback" });
+    master = ctx.createGain();
+    master.gain.value = target();
+    master.connect(ctx.destination);
+    return ctx;
   }
-  const decks = new Set();
-  function drop(d) { d.stop(); d.a.pause(); d.a.removeAttribute("src"); d.a.load(); decks.delete(d); }
+  function load(n) {
+    if (!buffers.has(n)) {
+      const p = fetch(TRACKS[n]).then((r) => r.arrayBuffer()).then((b) => ctx.decodeAudioData(b));
+      p.catch(() => buffers.delete(n));
+      buffers.set(n, p);
+    }
+    return buffers.get(n);
+  }
+  // One playing copy of a song, with its own fade.
+  function voice(buf, fadeSec, at = 0) {
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0, ctx.currentTime);
+    g.gain.linearRampToValueAtTime(1, ctx.currentTime + fadeSec);
+    g.connect(master);
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    src.connect(g);
+    src.start(0, at);
+    return { src, g, startedAt: ctx.currentTime }; // ctx time stands still while suspended
+  }
+  function fadeOut(v, sec) {
+    const t = ctx.currentTime;
+    v.g.gain.cancelScheduledValues(t);
+    v.g.gain.setValueAtTime(v.g.gain.value, t);
+    v.g.gain.linearRampToValueAtTime(0, t + sec);
+    try { v.src.stop(t + sec + 0.05); } catch { /* already stopped */ }
+    setTimeout(() => { try { v.src.disconnect(); v.g.disconnect(); } catch { /* gone */ } }, sec * 1000 + 300);
+  }
 
-  let name = null, cur = null, unlocked = false, looping = null;
-  function startTrack(n, fadeMs) {
+  let name = null, cur = null, loopTimer = 0, unlocked = false, token = 0;
+  // Seamless loop: a little before the end, start the song again and cross-fade.
+  function scheduleLoop(buf) {
+    clearTimeout(loopTimer);
+    const left = buf.duration - (ctx.currentTime - cur.startedAt) - LOOP_XFADE;
+    loopTimer = setTimeout(() => {
+      if (!cur || ctx.state !== "running") return;
+      const old = cur;
+      cur = voice(buf, LOOP_XFADE);
+      fadeOut(old, LOOP_XFADE);
+      scheduleLoop(buf);
+    }, Math.max(1000, left * 1000));
+  }
+  async function startTrack(n, fadeSec) {
+    const my = ++token;
+    let buf;
+    try { buf = await load(n); } catch { return; }
+    if (my !== token || ctx.state !== "running") return;
     const old = cur;
     name = n;
-    cur = deck(TRACKS[n]);
-    cur.a.play().then(() => cur.ramp(target(), fadeMs)).catch(() => {});
-    watchLoop(cur);
-    if (old) old.ramp(0, fadeMs, () => drop(old));
+    cur = voice(buf, fadeSec);
+    scheduleLoop(buf);
+    if (old) fadeOut(old, fadeSec);
+    for (const k of buffers.keys()) if (k !== n) buffers.delete(k); // free memory
   }
-  // Seamless loop: shortly before the end, start the same song again and cross-fade.
-  function watchLoop(d) {
-    d.a.addEventListener("timeupdate", () => {
-      if (d !== cur || !d.a.duration || d.a.currentTime < d.a.duration - LOOP_XFADE) return;
-      if (looping === d) return;
-      looping = d;
-      startTrack(name, LOOP_XFADE * 1000);
-    });
-  }
-  function play() {
+  async function play() {
     if (!enabled || !unlocked || document.visibilityState !== "visible") return;
     const n = pick(slot());
-    if (!n) return;
-    if (cur && name === n && !cur.a.paused) return;
-    if (cur && name === n) { cur.a.play().then(() => cur.ramp(target(), FADE_IN)).catch(() => {}); return; }
-    startTrack(n, cur ? XFADE : FADE_IN);
+    if (!n || !engine()) return;
+    if (ctx.state === "running" && cur && name === n) return; // already playing this song
+    master.gain.cancelScheduledValues(ctx.currentTime);
+    master.gain.setValueAtTime(master.gain.value, ctx.currentTime);
+    if (ctx.state !== "running") { try { await ctx.resume(); } catch { return; } }
+    // Coming back: fade the whole mix up again.
+    master.gain.setValueAtTime(cur && name === n ? 0 : master.gain.value, ctx.currentTime);
+    master.gain.linearRampToValueAtTime(target(), ctx.currentTime + FADE_IN / 1000);
+    if (cur && name === n) { resumeLoop(); return; }
+    startTrack(n, (cur ? XFADE : FADE_IN) / 1000);
   }
   function pause(ms = FADE_OUT) {
-    if (!cur) return;
-    const d = cur;
-    d.ramp(0, ms, () => d.a.pause());
-    for (const o of decks) if (o !== cur) drop(o);
+    if (!ctx || !cur) return;
+    const t = ctx.currentTime;
+    master.gain.cancelScheduledValues(t);
+    master.gain.setValueAtTime(master.gain.value, t);
+    master.gain.linearRampToValueAtTime(0, t + ms / 1000);
+    const v = cur; cur = null; name = null; token++;
+    clearTimeout(loopTimer);
+    fadeOut(v, ms / 1000);
   }
-  // Leaving the app: silence everything right away, no fade (a fade can't run in the background).
+  // Leaving the app: freeze all sound instantly.
   function hush() {
-    for (const d of decks) { d.stop(); d.a.volume = 0; d.a.pause(); if (d !== cur) drop(d); }
-    looping = null;
+    if (!ctx) return;
+    clearTimeout(loopTimer);
+    master.gain.cancelScheduledValues(ctx.currentTime);
+    master.gain.setValueAtTime(0, ctx.currentTime);
+    ctx.suspend().catch(() => {});
+  }
+  function resumeLoop() {
+    if (cur && buffers.has(name)) buffers.get(name).then((b) => { if (cur) scheduleLoop(b); });
   }
 
   // First tap anywhere unlocks sound, then music fades in.
   const unlock = () => { unlocked = true; play(); };
   window.addEventListener("pointerdown", unlock, { once: true, capture: true });
-  document.addEventListener("visibilitychange", () => (document.visibilityState === "visible" ? play() : hush()));
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") play(); else hush();
+  });
   window.addEventListener("pagehide", hush);
-  window.addEventListener("blur", () => { if (document.visibilityState !== "visible") hush(); });
-  // Stop Chrome from offering background playback controls for the music.
-  if ("mediaSession" in navigator) {
-    try { navigator.mediaSession.setActionHandler("play", () => { if (document.visibilityState === "visible") play(); }); } catch { /* unsupported */ }
-    try { navigator.mediaSession.setActionHandler("pause", hush); } catch { /* unsupported */ }
-  }
-  setInterval(() => { if (enabled && unlocked && document.visibilityState === "visible" && cur && pick(slot()) !== name) play(); }, 60000);
+  setInterval(() => { if (enabled && unlocked && document.visibilityState === "visible" && cur && pick(slot()) !== name) startTrack(pick(slot()), XFADE / 1000); }, 60000);
 
   // Music on/off switch in the footer (Me tab), next to "Sounds on".
   const btn = document.getElementById("musicBtn");
@@ -144,10 +181,12 @@
     slider.addEventListener("input", () => {
       level = +slider.value; paint();
       try { localStorage.setItem(VOL_KEY, String(level)); } catch { /* storage blocked */ }
-      if (cur && !cur.a.paused) { cur.stop(); cur.a.volume = target(); }
-      else if (enabled) { unlocked = true; play(); }
+      if (ctx && cur && ctx.state === "running") {
+        master.gain.cancelScheduledValues(ctx.currentTime);
+        master.gain.setTargetAtTime(target(), ctx.currentTime, 0.05);
+      } else if (enabled) { unlocked = true; play(); }
     });
   }
 
-  window.DaybreakAmbient = { slot, tracks: TRACKS, play, pause, hush, get playing() { return [...decks].filter((d) => !d.a.paused).length; } };
+  window.DaybreakAmbient = { slot, tracks: TRACKS, play, pause, hush, get playing() { return !!(ctx && cur && ctx.state === "running"); }, get track() { return name; } };
 })();
