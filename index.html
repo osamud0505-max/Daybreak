@@ -17,7 +17,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=32">
+  <link rel="stylesheet" href="style.css?v=33">
 </head>
 <body>
   <div class="sky" id="sky" aria-hidden="true"></div>
@@ -181,6 +181,11 @@
           <span class="set-text"><strong>Background music</strong><small>A soft song for each time of day</small></span>
           <button class="switch" id="musicBtn" type="button" role="switch" aria-checked="true" aria-label="Background music"></button>
         </div>
+        <div class="set-row vol-row">
+          <span class="vol-ico" data-icon="note-soft" aria-hidden="true"></span>
+          <input class="vol" id="musicVol" type="range" min="0" max="100" step="1" value="45" aria-label="Music volume">
+          <span class="vol-ico loud" data-icon="note-loud" aria-hidden="true"></span>
+        </div>
         <div class="set-row">
           <span class="set-text"><strong>Tap sounds</strong><small>Little chimes when you tick things off</small></span>
           <button class="switch" id="soundBtn" type="button" role="switch" aria-checked="true" aria-label="Tap sounds"></button>
@@ -223,12 +228,12 @@
     <button type="button" data-go="me"><span data-icon="heart"></span>Me</button>
   </nav>
 
-  <script src="icons.js?v=32"></script>
-  <script src="sound.js?v=32"></script>
-  <script src="schedule.js?v=32"></script>
-  <script src="app.js?v=32"></script>
-  <script src="sky.js?v=32"></script>
-  <script src="fairy.js?v=32"></script>
-  <script src="ambient.js?v=32"></script>
+  <script src="icons.js?v=33"></script>
+  <script src="sound.js?v=33"></script>
+  <script src="schedule.js?v=33"></script>
+  <script src="app.js?v=33"></script>
+  <script src="sky.js?v=33"></script>
+  <script src="fairy.js?v=33"></script>
+  <script src="ambient.js?v=33"></script>
 </body>
 </html>
